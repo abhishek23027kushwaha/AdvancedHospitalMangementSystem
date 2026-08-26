@@ -44,7 +44,7 @@ const OnlineConsultation = () => {
 
   return (
     <div 
-      className="w-full bg-white py-12 border-b border-[#F0F0F5]"
+      className="w-full bg-white py-12"
     >
       <div className="max-w-[1200px] mx-auto px-4">
         

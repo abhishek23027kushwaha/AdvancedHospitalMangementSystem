@@ -4,6 +4,9 @@ import Certified from './Certified';
 import Doctors from './LatestDoctors';
 import VoiceOfTrust from './VoiceOfTrust';
 import OnlineConsultation from '../components/OnlineConsultation';
+import InClinicConsultation from '../components/InClinicConsultation';
+import ArticlePage from '../components/ArticleSection/ArticlePage';
+import MassageForUser from './MassageForUser';
 
 const Home = () => {
   return (
@@ -11,6 +14,12 @@ const Home = () => {
       <HeroSection />
       
       <OnlineConsultation />
+
+      <InClinicConsultation />
+
+      <ArticlePage />
+
+      <MassageForUser />
       
       <div className="relative z-20">
         <Certified />
