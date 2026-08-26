@@ -8,6 +8,7 @@ import StepFollow from './StepFollow';
 import Befinits from './Befinits';
 import Experience from './Experience';
 import UserExperience from './UserExperience';
+import Faq from './Faq';
 
 const VideoConsult = () => {
   return (
@@ -109,6 +110,9 @@ const VideoConsult = () => {
 
       {/* User Reviews Section */}
       <UserExperience />
+
+      {/* FAQ Section */}
+      <Faq />
       
     </div>
   );
