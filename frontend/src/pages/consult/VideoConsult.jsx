@@ -3,6 +3,9 @@ import { CheckCircle, FileText, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Specialities from './Specialities';
 import CommonHealth from './CommonHealth';
+import OurDoctor from './OurDoctor';
+import StepFollow from './StepFollow';
+import Befinits from './Befinits';
 
 const VideoConsult = () => {
   return (
@@ -89,6 +92,15 @@ const VideoConsult = () => {
 
       {/* Common Health Concerns Section */}
       <CommonHealth />
+
+      {/* Our Doctors Section */}
+      <OurDoctor />
+
+      {/* How it works Section */}
+      <StepFollow />
+
+      {/* Benefits Section */}
+      <Befinits />
       
     </div>
   );
