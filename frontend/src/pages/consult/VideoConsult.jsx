@@ -9,6 +9,7 @@ import Befinits from './Befinits';
 import Experience from './Experience';
 import UserExperience from './UserExperience';
 import Faq from './Faq';
+import Connect from './connect';
 
 const VideoConsult = () => {
   return (
@@ -113,6 +114,9 @@ const VideoConsult = () => {
 
       {/* FAQ Section */}
       <Faq />
+
+      {/* Connect CTA Section */}
+      <Connect />
       
     </div>
   );
