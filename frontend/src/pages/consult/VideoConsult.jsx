@@ -6,6 +6,8 @@ import CommonHealth from './CommonHealth';
 import OurDoctor from './OurDoctor';
 import StepFollow from './StepFollow';
 import Befinits from './Befinits';
+import Experience from './Experience';
+import UserExperience from './UserExperience';
 
 const VideoConsult = () => {
   return (
@@ -101,6 +103,12 @@ const VideoConsult = () => {
 
       {/* Benefits Section */}
       <Befinits />
+
+      {/* Experience Videos Section */}
+      <Experience />
+
+      {/* User Reviews Section */}
+      <UserExperience />
       
     </div>
   );
