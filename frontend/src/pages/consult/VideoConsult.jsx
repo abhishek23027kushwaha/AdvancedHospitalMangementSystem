@@ -2,6 +2,7 @@ import React from 'react';
 import { CheckCircle, FileText, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Specialities from './Specialities';
+import CommonHealth from './CommonHealth';
 
 const VideoConsult = () => {
   return (
@@ -85,6 +86,9 @@ const VideoConsult = () => {
 
       {/* Specialities Section */}
       <Specialities />
+
+      {/* Common Health Concerns Section */}
+      <CommonHealth />
       
     </div>
   );
