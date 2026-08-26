@@ -18,6 +18,7 @@ import DoctorAdmin from "./pages/DoctorAdmin"
 import DoctorLogin from "./pages/DoctorLogin"
 import ServiceBooking from "./pages/ServiceBooking"
 import AboutUs from "./pages/AboutUs"
+import VideoConsult from "./pages/consult/VideoConsult"
 
 // ── Shared Components ──
 import Navbar from "./components/Navbar"
@@ -96,6 +97,7 @@ function App() {
         <Route path="/about" element={<AboutUs />} />
         <Route path="/doctors" element={<AllDoctors />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/consult" element={<VideoConsult />} />
         <Route path="/book-appointment/:doctorId?" element={<Appointments />} />
         <Route path="/book-service/:serviceId" element={<ServiceBooking />} />
         <Route path="/appointments" element={<MyAppointments />} />

@@ -67,7 +67,7 @@ const Navbar = () => {
               <Link to="/doctors" className="text-[15px] font-bold text-[#414146] hover:text-[#28328C] transition-colors no-underline">
                 Find Doctors
               </Link>
-              <Link to="/services" className="text-[15px] font-bold text-[#414146] hover:text-[#28328C] transition-colors no-underline">
+              <Link to="/consult" className="text-[15px] font-bold text-[#414146] hover:text-[#28328C] transition-colors no-underline">
                 Video Consult
               </Link>
               <Link to="/services" className="text-[15px] font-bold text-[#414146] hover:text-[#28328C] transition-colors no-underline">
@@ -204,7 +204,7 @@ const Navbar = () => {
             >
               <div className="flex flex-col pt-2">
                 <Link to="/doctors" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline border-b border-[#F0F0F5]">Find Doctors</Link>
-                <Link to="/services" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline border-b border-[#F0F0F5]">Video Consult</Link>
+                <Link to="/consult" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline border-b border-[#F0F0F5]">Video Consult</Link>
                 <Link to="/services" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline border-b border-[#F0F0F5]">Lab Tests</Link>
                 <Link to="/services" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline">Surgeries</Link>
 

@@ -20,14 +20,7 @@ const Home = () => {
       <ArticlePage />
 
       <MassageForUser />
-      
-      <div className="relative z-20">
-        <Certified />
-      </div>
-      
-      <Doctors />
 
-      <VoiceOfTrust />
     </div>
   );
 };
