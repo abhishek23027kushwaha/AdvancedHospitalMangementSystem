@@ -2,6 +2,7 @@ import React from 'react';
 import CorporateNavbar from './CorporateNavbar';
 import ScheduleDemoForm from './ScheduleDemoForm';
 import OurServices from './OurServices';
+import WhyChooseUs from './WhyChooseUs';
 import totalProtectImg from '../../assets/total_protect_dweb.png';
 import heroImage from '../../assets/hero-image.png';
 
@@ -66,6 +67,9 @@ const HealthWellness = () => {
 
       {/* Our Services Section */}
       <OurServices />
+
+      {/* Why Choose Us Section */}
+      <WhyChooseUs />
 
     {/* End root container div */}
     </div>
