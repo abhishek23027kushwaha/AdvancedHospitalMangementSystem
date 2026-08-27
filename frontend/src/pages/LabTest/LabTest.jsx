@@ -4,6 +4,8 @@ import TopTest from './TopTest';
 import PopularHealthCheckUp from './PopularHealthCheckUp';
 import WorkFlow from './workFlow';
 import Service from './Service';
+import RecommendedCheckup from './RecommendedCheckup';
+import BookWithUs from './BookWithUs';
 
 const LabTest = () => {
   return (
@@ -80,13 +82,15 @@ const LabTest = () => {
         {/* Popular Health Checkup Packages Component */}
         <PopularHealthCheckUp />
 
-        {/* Find Tests by Health Concern Component */}
-    
-
       </div>
         <WorkFlow/>
-      {/* Workflow Component */}
       < Service/>
+
+      {/* Recommended Vital Checkups Component */}
+      <RecommendedCheckup />
+
+      {/* Why Book With Us Component */}
+      <BookWithUs />
     </div>
   );
 };

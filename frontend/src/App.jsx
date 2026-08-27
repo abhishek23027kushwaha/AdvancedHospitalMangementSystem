@@ -19,7 +19,7 @@ import DoctorLogin from "./pages/DoctorLogin"
 import ServiceBooking from "./pages/ServiceBooking"
 import AboutUs from "./pages/AboutUs"
 import VideoConsult from "./pages/consult/VideoConsult"
-import LabTest from "./pages/labtest/LabTest"
+import LabTest from "./pages/LabTest/LabTest"
 
 // ── Shared Components ──
 import Navbar from "./components/Navbar"
