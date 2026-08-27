@@ -3,6 +3,7 @@ import CorporateNavbar from './CorporateNavbar';
 import ScheduleDemoForm from './ScheduleDemoForm';
 import OurServices from './OurServices';
 import WhyChooseUs from './WhyChooseUs';
+import PractoEcosystem from './PractoEcosystem';
 import totalProtectImg from '../../assets/total_protect_dweb.png';
 import heroImage from '../../assets/hero-image.png';
 
@@ -70,6 +71,9 @@ const HealthWellness = () => {
 
       {/* Why Choose Us Section */}
       <WhyChooseUs />
+
+      {/* Practo Ecosystem Section */}
+      <PractoEcosystem />
 
     {/* End root container div */}
     </div>
