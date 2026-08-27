@@ -1,5 +1,8 @@
 import React from 'react';
-import { MessageSquare, PlusCircle, Stethoscope } from 'lucide-react';
+import chatImg from '../../assets/ic-chat.png';
+import plusImg from '../../assets/ic-plus.png';
+import doctorImg from '../../assets/ic-doctor.png';
+import worldMapImg from '../../assets/world-map.png';
 
 const PractoEcosystem = () => {
   return (
@@ -23,8 +26,8 @@ const PractoEcosystem = () => {
           <div className="flex flex-col gap-10 w-full md:w-[45%]">
             
             <div className="flex items-center gap-6">
-              <div className="w-[70px] min-w-[70px] h-[70px] flex items-center justify-center text-[#a54c8d]">
-                <MessageSquare size={48} strokeWidth={1.5} />
+              <div className="w-[70px] min-w-[70px] h-[70px] flex items-center justify-center">
+                <img src={chatImg} alt="Instant consultations" className="max-w-full max-h-full object-contain" />
               </div>
               <div className="flex flex-col justify-center">
                 <h3 className="text-[22px] font-bold text-[#1a1a1a] leading-tight">15k+</h3>
@@ -33,8 +36,8 @@ const PractoEcosystem = () => {
             </div>
 
             <div className="flex items-center gap-6">
-              <div className="w-[70px] min-w-[70px] h-[70px] flex items-center justify-center text-[#a54c8d]">
-                <PlusCircle size={48} strokeWidth={1.5} />
+              <div className="w-[70px] min-w-[70px] h-[70px] flex items-center justify-center">
+                <img src={plusImg} alt="Patients per year" className="max-w-full max-h-full object-contain" />
               </div>
               <div className="flex flex-col justify-center">
                 <h3 className="text-[22px] font-bold text-[#1a1a1a] leading-tight">30cr+</h3>
@@ -43,8 +46,8 @@ const PractoEcosystem = () => {
             </div>
 
             <div className="flex items-center gap-6">
-              <div className="w-[70px] min-w-[70px] h-[70px] flex items-center justify-center text-[#a54c8d]">
-                <Stethoscope size={48} strokeWidth={1.5} />
+              <div className="w-[70px] min-w-[70px] h-[70px] flex items-center justify-center">
+                <img src={doctorImg} alt="Doctor partners" className="max-w-full max-h-full object-contain" />
               </div>
               <div className="flex flex-col justify-center">
                 <h3 className="text-[22px] font-bold text-[#1a1a1a] leading-tight">1.2 lakh+</h3>
@@ -55,11 +58,8 @@ const PractoEcosystem = () => {
           </div>
 
           {/* Right Map Image */}
-          <div className="w-full md:w-[55%] flex justify-center">
-            {/* Using a placeholder styled to look like the space for the map. */}
-            <div className="w-full aspect-[16/9] bg-gray-50 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 font-medium">
-              World Map Image (Please provide in assets)
-            </div>
+          <div className="w-full md:w-[55%] flex justify-center items-center">
+            <img src={worldMapImg} alt="Practo Ecosystem Map" className="w-full max-w-[500px] h-auto object-contain opacity-90" />
           </div>
 
         </div>

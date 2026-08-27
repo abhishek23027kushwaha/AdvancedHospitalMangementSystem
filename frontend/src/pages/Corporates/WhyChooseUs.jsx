@@ -1,5 +1,7 @@
 import React from 'react';
-import { Settings, Users, Mic } from 'lucide-react';
+import orgImg from '../../assets/organizations.png';
+import empImg from '../../assets/employees.png';
+import leadersImg from '../../assets/leaders.png';
 
 const WhyChooseUs = () => {
   return (
@@ -13,8 +15,8 @@ const WhyChooseUs = () => {
           
           {/* For Organizations */}
           <div className="flex items-start gap-4">
-            <div className="w-[60px] min-w-[60px] h-[60px] flex items-center justify-center text-orange-500">
-              <Settings size={50} strokeWidth={1.5} />
+            <div className="w-[60px] min-w-[60px] h-[60px] flex items-center justify-center">
+              <img src={orgImg} alt="For Organizations" className="max-w-full max-h-full object-contain" />
             </div>
             <div className="flex flex-col text-left pt-1">
               <h3 className="text-[18px] font-bold text-[#1a1a1a] mb-1">For Organizations</h3>
@@ -26,8 +28,8 @@ const WhyChooseUs = () => {
 
           {/* For Employees */}
           <div className="flex items-start gap-4">
-            <div className="w-[60px] min-w-[60px] h-[60px] flex items-center justify-center text-purple-500">
-              <Users size={50} strokeWidth={1.5} />
+            <div className="w-[60px] min-w-[60px] h-[60px] flex items-center justify-center">
+              <img src={empImg} alt="For Employees" className="max-w-full max-h-full object-contain" />
             </div>
             <div className="flex flex-col text-left pt-1">
               <h3 className="text-[18px] font-bold text-[#1a1a1a] mb-1">For Employees</h3>
@@ -39,8 +41,8 @@ const WhyChooseUs = () => {
 
           {/* For Leaders */}
           <div className="flex items-start gap-4">
-            <div className="w-[60px] min-w-[60px] h-[60px] flex items-center justify-center text-amber-600">
-              <Mic size={50} strokeWidth={1.5} />
+            <div className="w-[60px] min-w-[60px] h-[60px] flex items-center justify-center">
+              <img src={leadersImg} alt="For Leaders" className="max-w-full max-h-full object-contain" />
             </div>
             <div className="flex flex-col text-left pt-1">
               <h3 className="text-[18px] font-bold text-[#1a1a1a] mb-1">For Leaders</h3>

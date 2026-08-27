@@ -4,6 +4,8 @@ import ScheduleDemoForm from './ScheduleDemoForm';
 import OurServices from './OurServices';
 import WhyChooseUs from './WhyChooseUs';
 import PractoEcosystem from './PractoEcosystem';
+import DemoVideo from './DemoVideo';
+import ProductCapabilities from './ProductCapabilities';
 import totalProtectImg from '../../assets/total_protect_dweb.png';
 import heroImage from '../../assets/hero-image.png';
 
@@ -74,6 +76,12 @@ const HealthWellness = () => {
 
       {/* Practo Ecosystem Section */}
       <PractoEcosystem />
+
+      {/* Demo Video Section */}
+      <DemoVideo />
+
+      {/* Product Capabilities Section */}
+      <ProductCapabilities />
 
     {/* End root container div */}
     </div>
