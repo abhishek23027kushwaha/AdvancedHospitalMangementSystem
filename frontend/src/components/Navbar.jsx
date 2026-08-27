@@ -83,10 +83,20 @@ const Navbar = () => {
           <div className="flex items-center gap-6 h-full">
             {/* Desktop right Nav */}
             <div className="hidden xl:flex items-center gap-8 h-full">
-              <div className="flex items-center gap-1 cursor-pointer group">
-                <span className="bg-[#101026] text-white text-[10px] font-black px-1.5 py-0.5 rounded-[4px] tracking-wider mr-1">NEW</span>
+              <div className="relative flex items-center gap-1 cursor-pointer group h-full">
+                <span className="bg-[#101026] text-white text-[10px] font-black px-1.5 py-0.5 rounded-[4px] tracking-wider mr-1 mt-0.5">NEW</span>
                 <span className="text-[14px] text-[#414146] group-hover:text-[#28328C] transition-colors">For Corporates</span>
-                <ChevronDown size={14} className="text-[#414146] group-hover:text-[#28328C]" />
+                <ChevronDown size={14} className="text-[#414146] group-hover:text-[#28328C] transition-transform duration-200 group-hover:rotate-180" />
+                
+                {/* Dropdown Menu */}
+                <div className="absolute top-[80px] left-0 w-[240px] bg-white shadow-[0_8px_24px_rgba(0,0,0,0.12)] border border-[#F0F0F5] rounded-md py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                  <Link to="/corporate/health-wellness" className="block px-5 py-3 text-[14px] text-[#414146] hover:bg-[#F8FAFC] hover:text-[#28328C] no-underline">
+                    Health & Wellness Plans
+                  </Link>
+                  <Link to="/corporate/group-insurance" className="block px-5 py-3 text-[14px] text-[#414146] hover:bg-[#F8FAFC] hover:text-[#28328C] no-underline">
+                    Group Insurance
+                  </Link>
+                </div>
               </div>
               <div className="flex items-center gap-1 cursor-pointer group">
                 <span className="text-[14px] text-[#414146] group-hover:text-[#28328C] transition-colors">For Providers</span>

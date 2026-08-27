@@ -21,6 +21,7 @@ import AboutUs from "./pages/AboutUs"
 import VideoConsult from "./pages/consult/VideoConsult"
 import LabTest from "./pages/LabTest/LabTest"
 import Surgeries from "./pages/Surgeries/Surgeries"
+import HealthWellness from "./pages/Corporates/HealthWellness"
 
 // ── Shared Components ──
 import Navbar from "./components/Navbar"
@@ -53,6 +54,13 @@ const UserLayout = () => (
 /* ── Doctor Admin layout ── */
 const DoctorAdminLayout = () => (
   <div className="min-h-screen bg-[#F8FAFC]">
+    <Outlet />
+  </div>
+)
+
+/* ── Corporate layout ── */
+const CorporateLayout = () => (
+  <div className="min-h-screen bg-white">
     <Outlet />
   </div>
 )
@@ -107,6 +115,11 @@ function App() {
         <Route path="/appointments" element={<MyAppointments />} />
         <Route path="/my-services" element={<MyServices />} />
         <Route path="/contact" element={<Contact />} />
+      </Route>
+
+      {/* ── Corporate Routes ── */}
+      <Route element={<CorporateLayout />}>
+        <Route path="/corporate/health-wellness" element={<HealthWellness />} />
       </Route>
 
       {/* ── Doctor Admin Routes ── */}
