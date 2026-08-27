@@ -1,6 +1,8 @@
 import React from 'react';
 import doctorImg from '../../assets/dweb-hero-card.png';
 import { ChevronDown, User, Activity, MapPin, Building2 } from 'lucide-react';
+import WhyAssured from './WhyAssured';
+import TreatmentsOffered from './TreatmentsOffered';
 
 const Surgeries = () => {
   return (
@@ -9,14 +11,19 @@ const Surgeries = () => {
         
         <div className="flex flex-col lg:flex-row items-start justify-center lg:justify-start lg:gap-16 xl:gap-24 gap-12">
           
-          {/* Left Hero Section (Image Only) */}
-          <div className="w-full lg:w-[800px] xl:w-[900px] flex justify-center items-start mx-auto lg:mx-0">
-            <img 
-              src={doctorImg} 
-              alt="Surgery Network" 
-              className="w-full h-auto object-contain rounded-[24px]"
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
+          {/* Left Column (Hero Image + Why Assured) */}
+          <div className="w-full lg:w-[800px] xl:w-[900px] flex flex-col gap-6 mx-auto lg:mx-0">
+            <div className="flex justify-center items-start">
+              <img 
+                src={doctorImg} 
+                alt="Surgery Network" 
+                className="w-full h-auto object-contain rounded-[24px]"
+                onError={(e) => { e.target.style.display = 'none'; }}
+              />
+            </div>
+            
+            <WhyAssured />
+            <TreatmentsOffered />
           </div>
 
           {/* Right Column */}
