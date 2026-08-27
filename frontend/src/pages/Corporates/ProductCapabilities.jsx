@@ -42,7 +42,7 @@ const ProductCapabilities = () => {
   };
 
   return (
-    <div className="w-full bg-white py-16 md:py-24 relative overflow-hidden">
+    <div id="capabilities" className="w-full bg-white py-10 md:py-16 relative overflow-hidden">
       
       {/* Background Slanted Blue Section */}
       <div 
@@ -50,17 +50,17 @@ const ProductCapabilities = () => {
         style={{ clipPath: 'polygon(15% 0, 100% 0, 100% 100%, 0% 100%)' }}
       ></div>
 
-      <div className="max-w-[1200px] mx-auto px-4 md:px-8 relative z-10">
+      <div className="max-w-[1000px] mx-auto px-4 md:px-8 relative z-10">
         
         {/* Header */}
-        <div className="text-center mb-16">
-          <h2 className="text-[24px] md:text-[28px] font-bold text-[#1a1a1a]">
+        <div className="text-center mb-10">
+          <h2 className="text-[22px] md:text-[26px] font-bold text-[#1a1a1a]">
             Product Capabilities
           </h2>
         </div>
 
         {/* Carousel Container */}
-        <div className="relative w-full min-h-[350px] flex items-center bg-transparent">
+        <div className="relative w-full min-h-[250px] md:min-h-[280px] flex items-center bg-transparent">
           
           {/* Left Arrow */}
           <button 
@@ -74,8 +74,8 @@ const ProductCapabilities = () => {
           <div className="w-full flex flex-col md:flex-row items-center justify-between px-8 md:px-12 gap-8 md:gap-0">
             
             {/* Text */}
-            <div className="w-full md:w-[50%]">
-              <h3 className="text-[24px] md:text-[32px] font-semibold text-[#1a1a1a] leading-snug">
+            <div className="w-full md:w-[50%] pr-4 md:pr-0">
+              <h3 className="text-[20px] md:text-[26px] font-semibold text-[#1a1a1a] leading-snug">
                 {slides[currentIndex].title}
               </h3>
             </div>
@@ -85,7 +85,7 @@ const ProductCapabilities = () => {
               <img 
                 src={slides[currentIndex].image} 
                 alt={slides[currentIndex].title} 
-                className="max-h-[250px] md:max-h-[350px] object-contain drop-shadow-xl"
+                className="max-h-[180px] md:max-h-[260px] object-contain drop-shadow-xl"
               />
             </div>
             

@@ -6,6 +6,8 @@ import WhyChooseUs from './WhyChooseUs';
 import PractoEcosystem from './PractoEcosystem';
 import DemoVideo from './DemoVideo';
 import ProductCapabilities from './ProductCapabilities';
+import CorporateFAQ from './CorporateFAQ';
+import CorporateFooter from './CorporateFooter';
 import totalProtectImg from '../../assets/total_protect_dweb.png';
 import heroImage from '../../assets/hero-image.png';
 
@@ -82,6 +84,12 @@ const HealthWellness = () => {
 
       {/* Product Capabilities Section */}
       <ProductCapabilities />
+
+      {/* FAQ Section */}
+      <CorporateFAQ />
+
+      {/* Footer Section */}
+      <CorporateFooter />
 
     {/* End root container div */}
     </div>

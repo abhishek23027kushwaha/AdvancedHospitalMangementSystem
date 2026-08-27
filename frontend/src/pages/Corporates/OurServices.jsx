@@ -54,7 +54,7 @@ const servicesData = [
 
 const OurServices = () => {
   return (
-    <div className="w-full bg-white py-16 md:py-20">
+    <div id="services" className="w-full bg-white py-16 md:py-20">
       <div className="max-w-[1200px] mx-auto px-4 md:px-8">
         <h2 className="text-[28px] md:text-[32px] font-bold text-[#1a1a1a] text-center mb-12">
           Our Services

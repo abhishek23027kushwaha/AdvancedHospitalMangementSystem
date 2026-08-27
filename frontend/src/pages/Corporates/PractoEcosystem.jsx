@@ -6,7 +6,7 @@ import worldMapImg from '../../assets/world-map.png';
 
 const PractoEcosystem = () => {
   return (
-    <div className="w-full bg-white py-12 md:py-20">
+    <div id="ecosystem" className="w-full bg-white py-12 md:py-20">
       <div className="max-w-[1200px] mx-auto px-4 md:px-8">
         
         {/* Header */}
