@@ -62,7 +62,7 @@ const AddPatientModal = ({ onClose, onAddPatient }) => {
             {/* Date of Birth */}
             <div className="relative">
               <input 
-                type="text" 
+                type="date" 
                 name="dateOfBirth"
                 placeholder="Date of Birth*" 
                 value={formData.dateOfBirth}
@@ -70,7 +70,6 @@ const AddPatientModal = ({ onClose, onAddPatient }) => {
                 required
                 className="w-full border border-gray-300 rounded-md px-4 py-3 text-[14px] text-black focus:outline-none focus:border-blue-500 placeholder-gray-500"
               />
-              <Calendar size={20} className="absolute right-4 top-1/2 -translate-y-1/2 text-blue-400" />
             </div>
 
             {/* Gender */}

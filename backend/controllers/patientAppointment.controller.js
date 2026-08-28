@@ -49,7 +49,8 @@ export const bookDoctorAppointment = async (req, res) => {
 
     if (!isCash) {
       // 1. Create Razorpay Order
-      const amount = doctor.fee * 100; // in paise
+      const fee = doctor.fee && doctor.fee > 0 ? doctor.fee : 500;
+      const amount = Math.round(fee * 100); // in paise, must be integer
       const options = {
         amount,
         currency: "INR",
@@ -68,7 +69,7 @@ export const bookDoctorAppointment = async (req, res) => {
       patientGender:        gender || "",
       doctor:               doctorId,
       doctorName:           doctor.name,
-      doctorSpecialization: doctor.specialization,
+      doctorSpecialization: Array.isArray(doctor.specialization) ? doctor.specialization.join(', ') : (doctor.specialization || ""),
       slotId:               slotId || null,
       date,
       timeSlot,

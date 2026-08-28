@@ -1,20 +1,8 @@
 import React, { useState } from 'react';
 import { UserPlus, Phone, Mail } from 'lucide-react';
 
-const SelectPatientModal = ({ onClose, onAddNewPatient, onContinue }) => {
-  const [selectedPatientId, setSelectedPatientId] = useState(1); // Default select the first patient
-
-  // Dummy existing patient for now
-  const existingPatients = [
-    {
-      id: 1,
-      name: "Abhishek Kumar",
-      gender: "Male",
-      age: "0 Yrs",
-      phone: "+91-7557712212",
-      email: "abhishek9879@gmail.com"
-    }
-  ];
+const SelectPatientModal = ({ patients = [], onClose, onAddNewPatient, onContinue }) => {
+  const [selectedPatientId, setSelectedPatientId] = useState(patients.length > 0 ? patients[0].id : null);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 font-helveticaNeue">
@@ -39,7 +27,7 @@ const SelectPatientModal = ({ onClose, onAddNewPatient, onContinue }) => {
           </div>
 
           {/* Existing Patients Cards */}
-          {existingPatients.map(patient => (
+          {patients.map(patient => (
             <div 
               key={patient.id}
               onClick={() => setSelectedPatientId(patient.id)}
@@ -80,7 +68,7 @@ const SelectPatientModal = ({ onClose, onAddNewPatient, onContinue }) => {
               Cancel
             </button>
             <button 
-              onClick={() => onContinue(existingPatients.find(p => p.id === selectedPatientId))}
+              onClick={() => onContinue(patients.find(p => p.id === selectedPatientId))}
               disabled={!selectedPatientId}
               className="px-8 py-2.5 bg-[#004f9e] hover:bg-[#003d7a] text-white rounded-md font-medium text-[14px] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >

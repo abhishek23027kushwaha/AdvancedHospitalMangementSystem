@@ -1,0 +1,22 @@
+import dotenv from 'dotenv';
+dotenv.config();
+import Razorpay from "razorpay";
+
+const razorpayInstance = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+async function test() {
+  try {
+    const order = await razorpayInstance.orders.create({
+      amount: 100,
+      currency: "INR",
+      receipt: `receipt_${Date.now()}`,
+    });
+    console.log("Order created:", order);
+  } catch (err) {
+    console.error("Error creating order:", err);
+  }
+}
+test();

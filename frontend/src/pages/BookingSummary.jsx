@@ -37,7 +37,7 @@ const BookingSummary = () => {
         paymentMethod: 'Online'
       };
 
-      const { data } = await axiosInstance.post('/appointments/book', bookingData);
+      const { data } = await axiosInstance.post('/patient/appointments/book', bookingData);
 
       if (data.success && data.order) {
         initPay(data.order, data.appointment._id, data.razorpayKeyId);
@@ -49,41 +49,57 @@ const BookingSummary = () => {
   };
 
   const initPay = (order, appointmentId, razorpayKeyId) => {
-    const options = {
-      key: razorpayKeyId || "rzp_test_SUNI6vBIXNlZ8U", // Fallback if missing
-      amount: order.amount,
-      currency: order.currency,
-      name: "Narayana Health",
-      description: `Consultation with ${doctor.name}`,
-      order_id: order.id,
-      handler: async (response) => {
-        try {
-          const { data } = await axiosInstance.post(`/appointments/verify-payment`, {
-            ...response,
-            appointmentId
-          });
+    if (!window.Razorpay) {
+      toast.error("Razorpay SDK failed to load. Please disable adblockers or check your connection.");
+      setBookingLoading(false);
+      return;
+    }
 
-          if (data.success) {
-            toast.success("Payment successful & appointment confirmed!");
-            navigate('/my-appointments'); // or wherever user sees appointments
+    try {
+      const options = {
+        key: razorpayKeyId || "rzp_test_SUNI6vBIXNlZ8U", // Fallback if missing
+        amount: order.amount,
+        currency: order.currency,
+        name: "Narayana Health",
+        description: `Consultation with ${doctor.name}`,
+        order_id: order.id,
+        handler: async (response) => {
+          try {
+            const { data } = await axiosInstance.post(`/patient/appointments/verify-payment`, {
+              ...response,
+              appointmentId
+            });
+
+            if (data.success) {
+              toast.success("Payment successful & appointment confirmed!");
+              navigate('/appointments'); // Corrected from my-appointments
+            }
+          } catch (error) {
+            toast.error("Payment verification failed");
           }
-        } catch (error) {
-          toast.error("Payment verification failed");
+        },
+        prefill: {
+          name: patient?.name || "Patient"
+        },
+        theme: {
+          color: "#004f9e"
+        },
+        modal: {
+          ondismiss: () => setBookingLoading(false)
         }
-      },
-      prefill: {
-        name: patient.name
-      },
-      theme: {
-        color: "#004f9e"
-      },
-      modal: {
-        ondismiss: () => setBookingLoading(false)
-      }
-    };
+      };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response){
+         toast.error(response.error.description || "Payment failed");
+         setBookingLoading(false);
+      });
+      rzp.open();
+    } catch (err) {
+      console.error("Razorpay error:", err);
+      toast.error("Something went wrong with the payment gateway.");
+      setBookingLoading(false);
+    }
   };
 
   return (

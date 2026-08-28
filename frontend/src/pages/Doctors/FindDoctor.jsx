@@ -17,6 +17,16 @@ const FindDoctor = () => {
   
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [patients, setPatients] = useState([
+    {
+      id: 1,
+      name: "Abhishek Kumar",
+      gender: "Male",
+      age: "0 Yrs",
+      phone: "+91-7557712212",
+      email: "abhishek9879@gmail.com"
+    }
+  ]);
 
   useEffect(() => {
     const fetchDoctors = async () => {
@@ -53,7 +63,15 @@ const FindDoctor = () => {
   };
 
   const handlePatientAdded = (patientData) => {
-    // Mock adding patient and returning to select
+    const newPatient = {
+      id: Date.now(),
+      name: patientData.fullName,
+      gender: patientData.gender,
+      age: patientData.dateOfBirth ? "N/A" : "N/A", // simple mock
+      phone: `+91-${patientData.mobileNumber}`,
+      email: patientData.emailId
+    };
+    setPatients(prev => [...prev, newPatient]);
     setModalState(prev => ({ ...prev, type: 'SELECT_PATIENT' }));
   };
 
@@ -80,6 +98,7 @@ const FindDoctor = () => {
 
       {modalState.type === 'SELECT_PATIENT' && (
         <SelectPatientModal 
+          patients={patients}
           onClose={closeModal}
           onAddNewPatient={handleAddNewPatient}
           onContinue={handlePatientSelected}
@@ -89,7 +108,7 @@ const FindDoctor = () => {
       {modalState.type === 'ADD_PATIENT' && (
         <AddPatientModal 
           onClose={() => setModalState({ type: 'NONE', selectedDoctor: null })}
-          onPatientAdded={handlePatientSelected}
+          onAddPatient={handlePatientAdded}
         />
       )}
 
