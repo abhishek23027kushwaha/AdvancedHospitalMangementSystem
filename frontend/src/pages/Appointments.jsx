@@ -1,50 +1,84 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { Calendar as CalendarIcon } from 'lucide-react';
+import axiosInstance from '../utils/axiosInstance';
 
 const Appointments = () => {
   const { doctorId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Mock Data
-  const doctor = {
-    name: "Dr. Aditi Singhvi",
-    designation: "Consultant, Clinical Lead - Adult Heart Failure and Transplant",
-    fee: 900,
-    hospital: "Narayana Institute of Cardiac Sciences, Bangalore",
-    image: "https://via.placeholder.com/150"
+  const patient = location.state?.patient || {
+    name: "Unknown Patient",
+    gender: "-",
+    age: "-"
   };
 
-  const patient = {
-    name: "Abhishek Kumar",
-    gender: "Male",
-    age: "0 Yrs"
+  const [doctor, setDoctor] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [dates, setDates] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      try {
+        const res = await axiosInstance.get(`/doctor/${doctorId}`);
+        if (res.data.success) {
+          const doc = res.data.doctor;
+          setDoctor(doc);
+
+          // Extract unique dates from slots
+          if (doc.slots && doc.slots.length > 0) {
+            const uniqueDatesMap = new Map();
+            doc.slots.forEach(slot => {
+              if (!slot.isBooked) {
+                // slot.date format: "22 Mar 2026"
+                const d = new Date(slot.date);
+                if (!isNaN(d)) {
+                  uniqueDatesMap.set(slot.date, {
+                    fullStr: slot.date,
+                    num: d.getDate(),
+                    day: d.toLocaleDateString('en-US', { weekday: 'short' }),
+                    fullDate: d
+                  });
+                }
+              }
+            });
+            const datesArr = Array.from(uniqueDatesMap.values()).sort((a, b) => a.fullDate - b.fullDate);
+            setDates(datesArr);
+            if (datesArr.length > 0) {
+              setSelectedDate(datesArr[0]);
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Error fetching doctor:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (doctorId) fetchDoctor();
+  }, [doctorId]);
+
+  // Filter slots for selected date
+  const availableSlotsForDate = doctor?.slots?.filter(
+    s => s.date === selectedDate?.fullStr && !s.isBooked
+  ) || [];
+
+  const handleContinue = () => {
+    navigate('/booking-summary', {
+      state: {
+        doctor,
+        patient,
+        slot: selectedSlot
+      }
+    });
   };
 
-  // Generate some dates
-  const generateDates = () => {
-    const dates = [];
-    const today = new Date('2026-09-01'); // Using a fixed date from screenshot
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      dates.push({
-        num: d.getDate(),
-        day: d.toLocaleDateString('en-US', { weekday: 'short' }),
-        fullDate: d
-      });
-    }
-    return dates;
-  };
+  if (loading) return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+  if (!doctor) return <div className="min-h-screen flex items-center justify-center">Doctor not found.</div>;
 
-  const dates = generateDates();
-  const [selectedDate, setSelectedDate] = useState(dates[0]);
-  const [selectedTime, setSelectedTime] = useState(null);
-
-  const timeSlots = [
-    "01:00 PM", "01:10 PM", "01:20 PM", "01:30 PM", "01:40 PM", "01:50 PM", "03:00 PM",
-    "03:10 PM", "03:20 PM", "03:30 PM", "03:40 PM", "03:50 PM", "12:20 PM", "12:30 PM"
-  ];
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-helveticaNeue pb-20">
@@ -94,7 +128,7 @@ const Appointments = () => {
             </div>
             <div className="bg-[#eff4fa] p-4 flex items-center justify-center">
               <span className="text-[14px] text-black">
-                Consultation Fee: <strong className="font-bold">₹ {doctor.fee}</strong>
+                Consultation Fee: <strong className="font-bold">₹ {doctor.fee || 'N/A'}</strong>
               </span>
             </div>
           </div>
@@ -104,7 +138,7 @@ const Appointments = () => {
             <h4 className="text-[14px] font-bold text-black mb-3">Hospitals & Clinics</h4>
             <div className="flex gap-3">
               <div className="mt-1 w-4 h-4 rounded-full border-4 border-[#004f9e] shrink-0"></div>
-              <p className="text-[13px] text-black leading-snug">{doctor.hospital}</p>
+              <p className="text-[13px] text-black leading-snug">{doctor.location || "Hospital Location"}</p>
             </div>
           </div>
 
@@ -125,10 +159,12 @@ const Appointments = () => {
             {/* Date Section */}
             <div className="flex justify-between items-center">
               <h3 className="text-[18px] text-black font-bold">Date</h3>
-              <div className="flex items-center gap-2 text-[#004f9e] font-medium text-[14px] cursor-pointer">
-                <CalendarIcon size={18} />
-                <span>01 Sep, 26</span>
-              </div>
+              {selectedDate && (
+                <div className="flex items-center gap-2 text-[#004f9e] font-medium text-[14px] cursor-pointer">
+                  <CalendarIcon size={18} />
+                  <span>{selectedDate.fullStr}</span>
+                </div>
+              )}
             </div>
 
             {/* Date Carousel */}
@@ -136,13 +172,19 @@ const Appointments = () => {
               <button className="text-gray-400 hover:text-black px-2">&lt;</button>
               
               <div className="flex gap-3">
-                {dates.map((d, i) => {
-                  const isSelected = selectedDate.num === d.num;
-                  return (
-                    <div 
-                      key={i} 
-                      onClick={() => setSelectedDate(d)}
-                      className={`w-[70px] h-[75px] rounded-lg border flex flex-col items-center justify-center cursor-pointer transition-colors ${
+                {dates.length === 0 ? (
+                  <div className="text-gray-500 py-4">No available dates.</div>
+                ) : (
+                  dates.map((d, i) => {
+                    const isSelected = selectedDate?.fullStr === d.fullStr;
+                    return (
+                      <div 
+                        key={i} 
+                        onClick={() => {
+                          setSelectedDate(d);
+                          setSelectedSlot(null); // reset slot on date change
+                        }}
+                        className={`w-[70px] h-[75px] rounded-lg border flex flex-col items-center justify-center cursor-pointer transition-colors ${
                         isSelected 
                           ? 'border-[#004f9e] bg-[#eff4fa] text-[#004f9e]' 
                           : 'border-gray-200 hover:border-blue-300 text-gray-700'
@@ -152,7 +194,8 @@ const Appointments = () => {
                       <span className={`text-[13px] ${isSelected ? 'font-medium' : ''}`}>{d.day}</span>
                     </div>
                   );
-                })}
+                })
+                )}
               </div>
 
               <button className="text-gray-400 hover:text-black px-2">&gt;</button>
@@ -170,19 +213,23 @@ const Appointments = () => {
 
             {/* Time Slots Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 xl:grid-cols-6 gap-3">
-              {timeSlots.map((time, i) => (
-                <button
-                  key={i}
-                  onClick={() => setSelectedTime(time)}
-                  className={`py-3 rounded-md border text-[13px] font-medium transition-colors ${
-                    selectedTime === time
-                      ? 'border-[#004f9e] bg-[#004f9e] text-white'
-                      : 'border-gray-200 text-black hover:border-[#004f9e] hover:text-[#004f9e]'
-                  }`}
-                >
-                  {time}
-                </button>
-              ))}
+              {availableSlotsForDate.length === 0 ? (
+                <div className="text-gray-500 col-span-full">No slots available for this date.</div>
+              ) : (
+                availableSlotsForDate.map((slot) => (
+                  <button
+                    key={slot._id}
+                    onClick={() => setSelectedSlot(slot)}
+                    className={`py-3 rounded-md border text-[13px] font-medium transition-colors ${
+                      selectedSlot?._id === slot._id
+                        ? 'border-[#004f9e] bg-[#004f9e] text-white'
+                        : 'border-gray-200 text-black hover:border-[#004f9e] hover:text-[#004f9e]'
+                    }`}
+                  >
+                    {slot.time}
+                  </button>
+                ))
+              )}
             </div>
 
           </div>
@@ -192,13 +239,13 @@ const Appointments = () => {
       </div>
 
       {/* Sticky Bottom Bar */}
-      {selectedDate && selectedTime && (
+      {selectedSlot && (
         <div className="fixed bottom-0 left-0 right-0 bg-[#004f9e] py-4 px-6 md:px-[20%] flex items-center justify-between shadow-[0_-4px_10px_rgba(0,0,0,0.1)] z-40">
           <p className="text-white text-[15px]">
-            Selected Time Slot: <span className="ml-2 font-medium">{selectedDate.num} {selectedDate.fullDate.toLocaleDateString('en-US', { month: 'short' })} | {selectedTime}</span>
+            Selected Time Slot: <span className="ml-2 font-medium">{selectedDate?.fullStr} | {selectedSlot.time}</span>
           </p>
           <button 
-            onClick={() => navigate('/booking-summary')}
+            onClick={handleContinue}
             className="bg-white text-[#004f9e] px-6 py-2 rounded font-medium text-[14px] hover:bg-gray-100 transition-colors"
           >
             Continue to Pay

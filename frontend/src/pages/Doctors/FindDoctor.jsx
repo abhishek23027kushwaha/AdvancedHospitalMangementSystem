@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import SpecialtyCarousel from './SpecialtyCarousel';
 import SearchFilterBar from './SearchFilterBar';
@@ -6,6 +6,7 @@ import DoctorList from './DoctorList';
 import SelectPatientModal from './SelectPatientModal';
 import AddPatientModal from './AddPatientModal';
 import AllSpecialtiesModal from './AllSpecialtiesModal';
+import axiosInstance from '../../utils/axiosInstance';
 
 const FindDoctor = () => {
   const navigate = useNavigate();
@@ -13,6 +14,25 @@ const FindDoctor = () => {
     type: 'NONE', // 'NONE' | 'SELECT_PATIENT' | 'ADD_PATIENT' | 'ALL_SPECIALTIES'
     selectedDoctor: null
   });
+  
+  const [doctors, setDoctors] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDoctors = async () => {
+      try {
+        const response = await axiosInstance.get('/doctor/all');
+        if (response.data.success) {
+          setDoctors(response.data.doctors);
+        }
+      } catch (error) {
+        console.error("Error fetching doctors:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDoctors();
+  }, []);
 
   const handleBookAppointment = (doctor) => {
     setModalState({ type: 'SELECT_PATIENT', selectedDoctor: doctor });
@@ -27,8 +47,9 @@ const FindDoctor = () => {
   };
 
   const handlePatientSelected = (patient) => {
-    // Mock navigating to the time slot page
-    navigate(`/book-appointment/${modalState.selectedDoctor.id}`);
+    if (modalState.selectedDoctor) {
+      navigate(`/book-appointment/${modalState.selectedDoctor._id}`, { state: { patient } });
+    }
   };
 
   const handlePatientAdded = (patientData) => {
@@ -47,7 +68,13 @@ const FindDoctor = () => {
         
         <SearchFilterBar />
         
-        <DoctorList onBookAppointment={handleBookAppointment} />
+        {loading ? (
+          <div className="flex justify-center items-center py-20 text-gray-500">
+            Loading doctors...
+          </div>
+        ) : (
+          <DoctorList doctors={doctors} onBookAppointment={handleBookAppointment} />
+        )}
 
       </div>
 

@@ -22,7 +22,7 @@ const DoctorCard = ({ doctor, onBookAppointment }) => {
             {doctor.name}
           </h3>
           <p className="text-[13px] text-gray-600 leading-snug">
-            {doctor.designation}
+            {doctor.qualifications || `${doctor.experience} years experience`}
           </p>
         </div>
       </div>
@@ -30,22 +30,22 @@ const DoctorCard = ({ doctor, onBookAppointment }) => {
       {/* Middle Section - Details */}
       <div className="px-5 pb-5 flex flex-col gap-4 flex-1">
         
-        {/* Qualifications */}
+        {/* Qualifications / Specialization */}
         <div>
           <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-1">Qualifications</p>
-          <p className="text-[13px] text-black leading-snug">{doctor.qualifications}</p>
+          <p className="text-[13px] text-black leading-snug">{doctor.qualifications || "Not specified"}</p>
         </div>
 
         {/* Expertise */}
         <div>
           <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-1">Areas of Expertise</p>
-          <p className="text-[13px] font-medium text-black leading-snug">{doctor.expertise}</p>
+          <p className="text-[13px] font-medium text-black leading-snug">{Array.isArray(doctor.specialization) ? doctor.specialization.join(', ') : doctor.specialization}</p>
         </div>
 
         {/* Location */}
         <div className="mt-auto pt-2">
           <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wider mb-1">Location</p>
-          <p className="text-[13px] text-black leading-snug">{doctor.location}</p>
+          <p className="text-[13px] text-black leading-snug">{doctor.location || "Hospital Location"}</p>
         </div>
         
       </div>
@@ -58,9 +58,9 @@ const DoctorCard = ({ doctor, onBookAppointment }) => {
           onClick={() => onBookAppointment(doctor)}
           className="flex flex-1 rounded-md overflow-hidden bg-[#004f9e] hover:bg-[#003d7a] transition-colors cursor-pointer text-white h-11"
         >
-          <div className="w-[80px] bg-[#003d7a]/30 flex flex-col items-center justify-center border-r border-white/20">
+          <div className="w-[80px] bg-[#003d7a]/30 flex flex-col items-center justify-center border-r border-white/20 px-1 text-center">
             <span className="text-[10px] opacity-90">Available</span>
-            <span className="text-[12px] font-bold">{doctor.availabilityDate}</span>
+            <span className="text-[11px] font-bold leading-tight">{doctor.slots?.length > 0 ? "Yes" : "Soon"}</span>
           </div>
           <div className="flex-1 flex items-center justify-center font-bold text-[14px]">
             Book Appointment

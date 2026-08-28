@@ -22,22 +22,22 @@ router.post("/login",  doctorLogin);
 router.get ("/all",    getAllDoctors);    
 
 // ── Doctor-only routes (requires doctor JWT) ──────────────────────────────
-router.use(protectRoute, isDoctor);
+// Applied individually to avoid blocking the public /:id route
 
 // Profile
-router.get("/profile",  getDoctorProfile);
-router.put("/profile",  handleUpload(uploadImage), updateDoctorProfile);
+router.get("/profile", protectRoute, isDoctor, getDoctorProfile);
+router.put("/profile", protectRoute, isDoctor, handleUpload(uploadImage), updateDoctorProfile);
 
 // Slots
-router.get   ("/slots",          getDoctorSlots);
-router.post  ("/slots",          addDoctorSlot);
-router.delete("/slots/:slotId",  deleteDoctorSlot);
+router.get   ("/slots",          protectRoute, isDoctor, getDoctorSlots);
+router.post  ("/slots",          protectRoute, isDoctor, addDoctorSlot);
+router.delete("/slots/:slotId",  protectRoute, isDoctor, deleteDoctorSlot);
 
 // Appointments (doctor sees their own)
-router.get("/appointments",              getDoctorAppointments);
-router.put("/appointments/:id/status",   updateAppointmentStatusByDoctor);
+router.get("/appointments",  protectRoute, isDoctor, getDoctorAppointments);
+router.put("/appointments/:id/status", protectRoute, isDoctor, updateAppointmentStatusByDoctor);
 
 // ── Dynamic Public routes (Must be at the very bottom) ────────────────────
-router.get ("/:id",    getDoctorById);
+router.get ("/:id",getDoctorById);
 
 export default router;

@@ -6,9 +6,9 @@ import './App.css'
 
 // ── User Pages ──
 import Home from "./pages/Home"
-import Login from "./pages/Login"
 import SignUp from "./pages/SignUp"
 import Services from "./pages/Services"
+import UserProfile from "./pages/UserProfile"
 import Appointments from "./pages/Appointments"
 import MyAppointments from "./pages/MyAppointments"
 import MyServices from "./pages/MyServices"
@@ -97,7 +97,6 @@ function App() {
       <Toaster position="top-right" reverseOrder={false} />
       <Routes>
       {/* ── Auth Routes (no Navbar/Footer) ── */}
-      <Route path="/login" element={<RedirectUserIfAuth><Login /></RedirectUserIfAuth>} />
       <Route path="/signup" element={<RedirectUserIfAuth><SignUp /></RedirectUserIfAuth>} />
       <Route path="/doctor/login" element={<RedirectDoctorIfAuth><DoctorLogin /></RedirectDoctorIfAuth>} />
       <Route path="/admin/login" element={<RedirectAdminIfAuth><AdminLogin /></RedirectAdminIfAuth>} />
@@ -105,6 +104,7 @@ function App() {
       {/* ── User Routes ── */}
       <Route element={<UserLayout />}>
         <Route path="/" element={<Home />} />
+        <Route path="/profile" element={<UserProfile />} />
         <Route path="/about" element={<AboutUs />} />
         <Route path="/doctors" element={<FindDoctor />} />
         <Route path="/services" element={<Services />} />

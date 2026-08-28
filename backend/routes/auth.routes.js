@@ -1,6 +1,8 @@
 import express from "express";
 import {
   sendRegistrationOtp,
+  sendLoginOtp,
+  verifyLoginOtp,
   register,
   login,
   logout,
@@ -18,6 +20,8 @@ const router = express.Router();
 router.post("/send-otp", sendRegistrationOtp);
 router.post("/register", register);
 router.post("/login",    login);
+router.post("/login-otp/send", sendLoginOtp);
+router.post("/login-otp/verify", verifyLoginOtp);
 router.post("/logout",   logout);
 router.post("/google",   googleAuth);   // Google OAuth verification
 

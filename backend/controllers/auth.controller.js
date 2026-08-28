@@ -63,6 +63,96 @@ export const sendRegistrationOtp = async (req, res) => {
   }
 };
 
+// ── POST /api/auth/login-otp/send ─────────────────────────────────────────
+export const sendLoginOtp = async (req, res) => {
+  try {
+    const { phone } = req.body;
+    if (!phone) {
+      return res.status(400).json({ success: false, message: "Mobile number is required" });
+    }
+
+    const cleanPhone = phone.replace(/\D/g, "");
+    if (cleanPhone.length < 10) {
+      return res.status(400).json({ success: false, message: "Please enter a valid 10-digit mobile number" });
+    }
+
+    const user = await User.findOne({ phone: cleanPhone });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found with this mobile number. Please register first." });
+    }
+
+    const result = await sendOtpViaTwilio(cleanPhone);
+
+    if (result.provider === "dev" && result.devOtp) {
+      devOtpStore.set(cleanPhone, { otp: result.devOtp, expiresAt: Date.now() + 10 * 60 * 1000 });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `OTP sent to +91 ${cleanPhone.slice(-10)}`,
+      phone: cleanPhone,
+      otp: result.devOtp || undefined,
+    });
+  } catch (err) {
+    console.error("sendLoginOtp error:", err);
+    return res.status(500).json({ success: false, message: "Failed to send OTP" });
+  }
+};
+
+// ── POST /api/auth/login-otp/verify ───────────────────────────────────────
+export const verifyLoginOtp = async (req, res) => {
+  try {
+    const { phone, otp } = req.body;
+    if (!phone || !otp) {
+      return res.status(400).json({ success: false, message: "Phone and OTP are required" });
+    }
+
+    const cleanPhone = phone.replace(/\D/g, "");
+    
+    // Verify OTP
+    const verifyResult = await checkOtpViaTwilio(cleanPhone, otp);
+
+    if (verifyResult.provider === "dev") {
+      const stored = devOtpStore.get(cleanPhone);
+      if (!stored || Date.now() > stored.expiresAt || stored.otp !== otp.toString().trim()) {
+        return res.status(400).json({ success: false, message: "Invalid or expired verification code." });
+      }
+      devOtpStore.delete(cleanPhone);
+    } else if (!verifyResult.valid) {
+      return res.status(400).json({ success: false, message: "Invalid or expired verification code." });
+    }
+
+    // Login successful
+    const user = await User.findOne({ phone: cleanPhone });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    const token = generateToken(user._id, user.role);
+    res.cookie("token", token, cookieOpts);
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      user: {
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        gender: user.gender,
+        age: user.age,
+        credits: user.credits,
+        role: user.role,
+        avatar: user.avatar,
+      },
+      token,
+    });
+  } catch (err) {
+    console.error("verifyLoginOtp error:", err);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
 // ── POST /api/auth/register ───────────────────────────────────────────────
 export const register = async (req, res) => {
   try {
@@ -211,13 +301,17 @@ export const getMe = async (req, res) => {
 // ── PUT /api/auth/update-profile ──────────────────────────────────────────
 export const updateProfile = async (req, res) => {
   try {
-    const { name, phone, gender, age, avatar } = req.body;
+    const { name, phone, gender, age, avatar, mrn, dob, email, address } = req.body;
     const updates = {};
-    if (name)   updates.name   = name.trim();
-    if (phone)  updates.phone  = phone.trim();
-    if (gender) updates.gender = gender;
-    if (age)    updates.age    = Number(age);
-    if (avatar) updates.avatar = avatar;
+    if (name !== undefined)   updates.name   = name.trim();
+    if (phone !== undefined)  updates.phone  = phone.trim();
+    if (gender !== undefined) updates.gender = gender;
+    if (age !== undefined)    updates.age    = Number(age);
+    if (avatar !== undefined) updates.avatar = avatar;
+    if (mrn !== undefined)    updates.mrn    = mrn.trim();
+    if (dob !== undefined)    updates.dob    = dob.trim();
+    if (email !== undefined)  updates.email  = email.toLowerCase().trim();
+    if (address !== undefined) updates.address = address;
 
     const user = await User.findByIdAndUpdate(req.userId, updates, { new: true }).select("-password");
     return res.status(200).json({ success: true, message: "Profile updated", user });

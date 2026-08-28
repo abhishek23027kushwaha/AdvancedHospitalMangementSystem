@@ -270,8 +270,8 @@ const DoctorLogin = () => {
 
           {/* Bottom Footer Navigation */}
           <div className="mt-10 pt-5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
-            <Link to="/login" className="text-slate-600 hover:text-[#0d9488] font-medium transition-colors">
-              ← Patient Login
+            <Link to="/" className="text-slate-600 hover:text-[#0d9488] font-medium transition-colors">
+              Patient Portal
             </Link>
             <Link to="/admin/login" className="text-[#0d9488] font-semibold hover:underline">
               Admin Login →

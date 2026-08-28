@@ -502,12 +502,11 @@ const SignUp = () => {
               )}
             </button>
           </form>
-
-          {/* Footer */}
+            {/* Footer */}
           <div className="mt-5 text-center text-xs text-slate-500">
             Already have an account?{' '}
-            <Link to="/login" className="text-[#10b981] font-semibold hover:underline">
-              Login
+            <Link to="/" className="text-[#10b981] font-semibold hover:underline">
+              Login here
             </Link>
           </div>
         </div>

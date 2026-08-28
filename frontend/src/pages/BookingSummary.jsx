@@ -1,10 +1,90 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Pencil } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import axiosInstance from '../utils/axiosInstance';
 import paymentBanner from '../assets/payment_banner.png';
 
 const BookingSummary = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [bookingLoading, setBookingLoading] = useState(false);
+
+  // Destructure passed state
+  const { doctor, patient, slot } = location.state || {};
+
+  // If accessed directly without state, go back
+  if (!doctor || !slot) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <p className="mb-4">No booking details found.</p>
+        <button onClick={() => navigate('/doctors')} className="text-blue-600 hover:underline">Back to Doctors</button>
+      </div>
+    );
+  }
+
+  const handlePayOnline = async () => {
+    setBookingLoading(true);
+    try {
+      const bookingData = {
+        doctorId: doctor._id,
+        slotId: slot._id,
+        date: slot.date,
+        timeSlot: slot.time,
+        name: patient.name,
+        gender: patient.gender,
+        age: patient.age,
+        paymentMethod: 'Online'
+      };
+
+      const { data } = await axiosInstance.post('/appointments/book', bookingData);
+
+      if (data.success && data.order) {
+        initPay(data.order, data.appointment._id, data.razorpayKeyId);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to initiate booking");
+      setBookingLoading(false);
+    }
+  };
+
+  const initPay = (order, appointmentId, razorpayKeyId) => {
+    const options = {
+      key: razorpayKeyId || "rzp_test_SUNI6vBIXNlZ8U", // Fallback if missing
+      amount: order.amount,
+      currency: order.currency,
+      name: "Narayana Health",
+      description: `Consultation with ${doctor.name}`,
+      order_id: order.id,
+      handler: async (response) => {
+        try {
+          const { data } = await axiosInstance.post(`/appointments/verify-payment`, {
+            ...response,
+            appointmentId
+          });
+
+          if (data.success) {
+            toast.success("Payment successful & appointment confirmed!");
+            navigate('/my-appointments'); // or wherever user sees appointments
+          }
+        } catch (error) {
+          toast.error("Payment verification failed");
+        }
+      },
+      prefill: {
+        name: patient.name
+      },
+      theme: {
+        color: "#004f9e"
+      },
+      modal: {
+        ondismiss: () => setBookingLoading(false)
+      }
+    };
+
+    const rzp = new window.Razorpay(options);
+    rzp.open();
+  };
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] font-helveticaNeue pb-20">
@@ -30,7 +110,7 @@ const BookingSummary = () => {
           <div className="bg-white rounded-xl border border-gray-200 p-5 shadow-sm flex items-center justify-between">
             <span className="text-[15px] font-bold text-black">Time Slot</span>
             <div className="flex items-center gap-3">
-              <span className="text-[14px] text-black">01 Sep | 13:30 PM</span>
+              <span className="text-[14px] text-black">{slot.date} | {slot.time}</span>
               <button 
                 onClick={() => navigate(-1)}
                 className="flex items-center gap-1 text-[#004f9e] font-medium text-[14px] hover:underline"
@@ -54,19 +134,14 @@ const BookingSummary = () => {
               <h3 className="text-[15px] font-bold text-black">Payment Details</h3>
               
               <div className="flex justify-between items-center text-[14px]">
-                <span className="text-gray-500">Registration Fees</span>
-                <span className="text-black font-bold">₹ 300</span>
-              </div>
-              
-              <div className="flex justify-between items-center text-[14px]">
                 <span className="text-gray-500">Consultation Fees</span>
-                <span className="text-black font-bold">₹ 900</span>
+                <span className="text-black font-bold">₹ {doctor.fee || 'N/A'}</span>
               </div>
             </div>
             
             <div className="bg-[#eff4fa] p-5 flex justify-between items-center border-t border-gray-100">
               <span className="text-[15px] text-black font-medium">Total Fees</span>
-              <span className="text-[16px] text-black font-bold">₹ 1,200</span>
+              <span className="text-[16px] text-black font-bold">₹ {doctor.fee || 0}</span>
             </div>
           </div>
 
@@ -90,10 +165,16 @@ const BookingSummary = () => {
       <div className="fixed bottom-0 left-0 right-0 bg-[#004f9e] py-4 px-6 md:px-[20%] flex items-center justify-between shadow-[0_-4px_10px_rgba(0,0,0,0.1)] z-40">
         <div className="flex flex-col">
           <span className="text-white/90 text-[15px] font-medium">Total Fees</span>
-          <span className="text-white text-[22px] font-black tracking-wide">₹ 1,200</span>
+          <span className="text-white text-[22px] font-black tracking-wide">₹ {doctor.fee || 0}</span>
         </div>
-        <button className="bg-white text-[#004f9e] px-10 py-2.5 rounded font-bold text-[16px] hover:bg-gray-100 transition-colors shadow-sm">
-          Pay Online
+        <button 
+          onClick={handlePayOnline}
+          disabled={bookingLoading}
+          className={`bg-white text-[#004f9e] px-10 py-2.5 rounded font-bold text-[16px] transition-colors shadow-sm ${
+            bookingLoading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-gray-100'
+          }`}
+        >
+          {bookingLoading ? 'Processing...' : 'Pay Online'}
         </button>
       </div>
 

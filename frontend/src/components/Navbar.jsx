@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearUser, selectUser, selectIsAuth } from "../redux/user.slice.js";
 import { selectDoctor, selectIsDoctorAuth, clearDoctor } from "../redux/doctor.slice.js";
 import doctorsHeroImg from "../assets/doctors_hero.png";
+import LoginModal from "./LoginModal.jsx";
 
 const specialtiesColumn1 = [
   "Cardiologist", "Orthopaedician", "Oncologist", "Cardiac Surgeon", 
@@ -46,6 +47,7 @@ const Navbar = () => {
   const isAuthenticated = isDoctorAuth || isUserAuth;
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isLoginModalOpen, setLoginModalOpen] = useState(false);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -67,7 +69,7 @@ const Navbar = () => {
     dispatch(clearDoctor());
     setDropdownOpen(false);
     setMobileOpen(false);
-    navigate("/login");
+    navigate("/");
   };
 
   const displayName = currentUser?.name 
@@ -297,6 +299,14 @@ const Navbar = () => {
                         {currentUser?.role !== 'doctor' && (
                           <>
                             <Link
+                              to="/profile"
+                              onClick={() => setDropdownOpen(false)}
+                              className="w-full flex items-center gap-2 px-4 py-3 text-[14px] text-[#414146] hover:bg-[#F0F0F5] transition-colors no-underline"
+                            >
+                              <User size={16} />
+                              My Profile
+                            </Link>
+                            <Link
                               to="/appointments"
                               onClick={() => setDropdownOpen(false)}
                               className="w-full flex items-center gap-2 px-4 py-3 text-[14px] text-[#414146] hover:bg-[#F0F0F5] transition-colors no-underline"
@@ -327,15 +337,15 @@ const Navbar = () => {
                 </div>
               ) : (
                 <div className="flex items-center gap-4">
-                  <Link
-                    to="/login"
-                    className="flex items-center gap-1 cursor-pointer group focus:outline-none no-underline"
+                  <button
+                    onClick={() => setLoginModalOpen(true)}
+                    className="flex items-center gap-1 cursor-pointer group focus:outline-none bg-transparent border-none p-0"
                   >
                     <span className="text-[14px] text-[#414146] group-hover:text-[#28328C] transition-colors">
                       Login / Signup
                     </span>
                     <ChevronDown size={14} className="text-[#414146] group-hover:text-[#28328C]" />
-                  </Link>
+                  </button>
                 </div>
               )}
             </div>
@@ -371,7 +381,7 @@ const Navbar = () => {
                 <div className="border-t-[4px] border-[#F0F0F5] mt-2 pt-2">
                   {!isAuthenticated ? (
                     <div className="flex flex-col">
-                      <Link to="/login" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline">Login / Signup</Link>
+                      <button onClick={() => { setLoginModalOpen(true); setMobileOpen(false); }} className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] text-left border-none bg-transparent w-full">Login / Signup</button>
                       <Link to="/doctor/login" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline">Doctor Admin Login</Link>
                     </div>
                   ) : (
@@ -382,6 +392,7 @@ const Navbar = () => {
                       </div>
                       {currentUser?.role !== 'doctor' && (
                         <>
+                          <Link to="/profile" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline border-b border-[#F0F0F5]">My Profile</Link>
                           <Link to="/appointments" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline border-b border-[#F0F0F5]">My Appointments</Link>
                           <Link to="/my-services" className="px-4 py-3 text-[15px] font-bold text-[#414146] hover:bg-[#F0F0F5] no-underline border-b border-[#F0F0F5]">My Services</Link>
                         </>
@@ -400,6 +411,9 @@ const Navbar = () => {
       </nav>
       {/* Spacer to push content down because navbar is fixed and 72px tall */}
       <div className=" bg-white w-full"></div>
+      
+      {/* Login Modal Overlay */}
+      <LoginModal isOpen={isLoginModalOpen} onClose={() => setLoginModalOpen(false)} />
     </>
   );
 };
