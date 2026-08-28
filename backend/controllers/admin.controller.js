@@ -93,7 +93,7 @@ export const addDoctor = async (req, res) => {
   try {
     const { 
       name, email, password, phone, specialization, experience, fee, about, available, slots,
-      qualifications, location, patients, success, rating 
+      qualifications, location, hospitals, patients, success, rating 
     } = req.body;
 
     // Validation
@@ -142,6 +142,7 @@ export const addDoctor = async (req, res) => {
       slots: parsedSlots,
       qualifications: qualifications || "",
       location: location || "",
+      hospitals: hospitals ? JSON.parse(hospitals) : [],
       patients: patients || "0",
       success: success || "100",
       rating: Number(rating) || 5,
@@ -168,7 +169,10 @@ export const listDoctors = async (req, res) => {
     if (specialization) filter.specialization = specialization;
     if (available !== undefined) filter.available = available === "true";
 
-    const doctors = await Doctor.find(filter).select("-password").sort({ createdAt: -1 });
+    const doctors = await Doctor.find(filter)
+      .select("-password")
+      .populate("hospitals")
+      .sort({ createdAt: -1 });
     return res.status(200).json({ success: true, count: doctors.length, doctors });
   } catch (err) {
     return res.status(500).json({ success: false, message: "Server error" });
@@ -182,7 +186,7 @@ export const updateDoctor = async (req, res) => {
   try {
     const { 
       name, email, password, phone, specialization, experience, fee, about, available, 
-      qualifications, location, patients, success, rating, slots 
+      qualifications, location, hospitals, patients, success, rating, slots 
     } = req.body;
 
     const updates = {};
@@ -203,6 +207,18 @@ export const updateDoctor = async (req, res) => {
     if (patients !== undefined)       updates.patients       = String(patients);
     if (success !== undefined)        updates.success        = String(success);
     if (rating !== undefined)         updates.rating         = Number(rating) || 5;
+
+    if (hospitals !== undefined) {
+      try {
+        if (typeof hospitals === 'string' && hospitals.trim()) {
+           updates.hospitals = JSON.parse(hospitals);
+        } else if (Array.isArray(hospitals)) {
+           updates.hospitals = hospitals;
+        }
+      } catch (e) {
+        console.error("Error parsing hospitals in update:", e);
+      }
+    }
 
     // Handle slots
     if (slots !== undefined) {

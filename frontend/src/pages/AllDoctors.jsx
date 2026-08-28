@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search, MapPin, BadgeCheck, Heart, Star,
   CalendarCheck, User, ChevronLeft, ChevronRight,
-  Clock, Video, SlidersHorizontal, X, CheckCircle2
+  Clock, Video, SlidersHorizontal, X, CheckCircle2, Building2
 } from 'lucide-react';
 import axios from '../utils/axiosInstance';
 import { useNavigate } from 'react-router-dom';
@@ -76,6 +76,15 @@ const DoctorRow = ({ doc }) => {
             <>
               <span className="text-[#CBD5E1]">•</span>
               <span className="truncate max-w-[200px]">{doc.qualifications}</span>
+            </>
+          )}
+          {doc.hospitals && doc.hospitals.length > 0 && (
+            <>
+              <span className="text-[#CBD5E1]">•</span>
+              <span className="truncate max-w-[200px] flex items-center gap-1">
+                <Building2 size={12} className="text-[#16A34A]" />
+                {doc.hospitals.map(h => typeof h === 'object' ? h.name : h).join(', ')}
+              </span>
             </>
           )}
         </div>
@@ -164,18 +173,51 @@ const AllDoctors = () => {
   const [availTomorrow, setAvailTomorrow] = useState(false);
   const [inPerson, setInPerson] = useState(false);
   const [videoConsult, setVideoConsult] = useState(false);
+  
+  // Location and Hospital Filters
+  const [cities, setCities] = useState([]);
+  const [hospitals, setHospitals] = useState([]);
+  const [activeCity, setActiveCity] = useState('');
+  const [activeHospital, setActiveHospital] = useState('');
 
   // Sort & pagination
   const [sortBy, setSortBy] = useState('Relevance');
   const [currentPage, setCurrentPage] = useState(1);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    axios.get('/doctor/all')
+  const fetchDoctors = (city = '', hospitalId = '') => {
+    setLoading(true);
+    let url = '/doctor/all?';
+    if (city) url += `city=${city}&`;
+    if (hospitalId) url += `hospitalId=${hospitalId}&`;
+    
+    axios.get(url)
       .then(({ data }) => { if (data.success) setDoctors(data.doctors); })
       .catch(() => setError('Failed to load doctors'))
       .finally(() => setLoading(false));
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    fetchDoctors(activeCity, activeHospital);
+  }, [activeCity, activeHospital]);
+
+  useEffect(() => {
+    axios.get('/hospitals/cities').then(({ data }) => {
+      if (data.success) setCities(data.cities);
+    });
   }, []);
+
+  useEffect(() => {
+    if (activeCity) {
+      axios.get(`/hospitals?city=${activeCity}`).then(({ data }) => {
+        if (data.success) setHospitals(data.hospitals);
+      });
+      setActiveHospital(''); // Reset hospital when city changes
+    } else {
+      setHospitals([]);
+      setActiveHospital('');
+    }
+  }, [activeCity]);
 
   // Close suggestions on outside click
   useEffect(() => {
@@ -223,6 +265,7 @@ const AllDoctors = () => {
   const clearAll = () => {
     setExpFilters([]); setAvailToday(false); setAvailTomorrow(false);
     setInPerson(false); setVideoConsult(false); setActiveSpec('All'); setQuery('');
+    setActiveCity(''); setActiveHospital('');
   };
 
   // Experience counts
@@ -302,10 +345,17 @@ const AllDoctors = () => {
           </div>
 
           {/* Location */}
-          <div className="hidden md:flex items-center gap-2 border border-[#E2E8F0] rounded-full px-4 py-3 bg-white text-sm text-[#334155] font-medium cursor-pointer hover:border-[#2563EB] transition-colors flex-shrink-0">
+          <div className="hidden md:flex items-center gap-2 border border-[#E2E8F0] rounded-full px-4 py-3 bg-white text-sm text-[#334155] font-medium transition-colors flex-shrink-0 relative">
             <MapPin size={15} className="text-[#2563EB]" />
-            <span>India</span>
-            <ChevronRight size={14} className="text-[#94A3B8] rotate-90" />
+            <select
+              value={activeCity}
+              onChange={(e) => setActiveCity(e.target.value)}
+              className="bg-transparent border-0 outline-none cursor-pointer appearance-none pr-4 text-[#0F172A] font-semibold"
+            >
+              <option value="">All Cities</option>
+              {cities.map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+            <ChevronRight size={14} className="text-[#94A3B8] rotate-90 absolute right-4 pointer-events-none" />
           </div>
         </div>
       </div>
@@ -353,12 +403,38 @@ const AllDoctors = () => {
               {/* Location */}
               <div className="px-4 py-4 border-b border-[#F1F5F9]">
                 <p className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
-                  <MapPin size={11} /> Location
+                  <MapPin size={11} /> City
                 </p>
-                <div className="flex items-center justify-between bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-3 py-2 cursor-pointer hover:border-[#2563EB] transition-colors">
-                  <span className="text-[13px] text-[#334155] font-medium">India</span>
-                  <ChevronRight size={13} className="text-[#94A3B8] rotate-90" />
+                <div className="relative mb-3">
+                  <select
+                    value={activeCity}
+                    onChange={(e) => setActiveCity(e.target.value)}
+                    className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-3 py-2 text-[13px] text-[#334155] font-medium outline-none appearance-none cursor-pointer hover:border-[#2563EB] transition-colors"
+                  >
+                    <option value="">Any City</option>
+                    {cities.map(c => <option key={c} value={c}>{c}</option>)}
+                  </select>
+                  <ChevronRight size={13} className="text-[#94A3B8] rotate-90 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 </div>
+                
+                {activeCity && hospitals.length > 0 && (
+                  <>
+                    <p className="text-[11px] font-bold text-[#94A3B8] uppercase tracking-wider mb-2.5 flex items-center gap-1.5">
+                      <Building2 size={11} /> Hospital
+                    </p>
+                    <div className="relative">
+                      <select
+                        value={activeHospital}
+                        onChange={(e) => setActiveHospital(e.target.value)}
+                        className="w-full bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-3 py-2 text-[13px] text-[#334155] font-medium outline-none appearance-none cursor-pointer hover:border-[#2563EB] transition-colors"
+                      >
+                        <option value="">Any Hospital</option>
+                        {hospitals.map(h => <option key={h._id} value={h._id}>{h.name}</option>)}
+                      </select>
+                      <ChevronRight size={13} className="text-[#94A3B8] rotate-90 absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+                    </div>
+                  </>
+                )}
               </div>
 
               {/* Experience */}

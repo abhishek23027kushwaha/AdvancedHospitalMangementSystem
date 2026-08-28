@@ -11,6 +11,19 @@ export default function ListDoctors() {
   const [error, setError] = useState('');
   const [editingDoctor, setEditingDoctor] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
+  const [allHospitals, setAllHospitals] = useState([]);
+
+  useEffect(() => {
+    const fetchHospitals = async () => {
+      try {
+        const { data } = await axios.get('/hospitals');
+        if (data.success) setAllHospitals(data.hospitals);
+      } catch (err) {
+        console.error("Failed to load hospitals", err);
+      }
+    };
+    fetchHospitals();
+  }, []);
 
   const fetchDoctors = async () => {
     try {
@@ -105,6 +118,7 @@ export default function ListDoctors() {
           doctor={editingDoctor} 
           onClose={() => { setShowEditModal(false); setEditingDoctor(null); }} 
           onUpdate={fetchDoctors}
+          allHospitals={allHospitals}
         />
       )}
     </div>
@@ -117,7 +131,7 @@ const specializations = [
   'Oncologist', 'ENT Specialist', 'Ophthalmologist', 'Urologist',
 ];
 
-function EditDoctorModal({ doctor, onClose, onUpdate }) {
+function EditDoctorModal({ doctor, onClose, onUpdate, allHospitals }) {
   const [form, setForm] = useState({
     name: doctor.name || '',
     email: doctor.email || '',
@@ -129,6 +143,7 @@ function EditDoctorModal({ doctor, onClose, onUpdate }) {
     available: doctor.available ? 'true' : 'false',
     qualifications: doctor.qualifications || '',
     location: doctor.location || '',
+    hospitals: doctor.hospitals?.map(h => h._id || h) || [],
     patients: doctor.patients || '',
     success: doctor.success || '',
     rating: doctor.rating || '5',
@@ -173,7 +188,13 @@ function EditDoctorModal({ doctor, onClose, onUpdate }) {
 
     try {
       const fd = new FormData();
-      Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+      Object.entries(form).forEach(([k, v]) => {
+        if (k === 'hospitals') {
+          fd.append(k, JSON.stringify(v));
+        } else {
+          fd.append(k, v);
+        }
+      });
       if (img) fd.append('image', img);
       fd.append('slots', JSON.stringify(slots));
 
@@ -238,7 +259,31 @@ function EditDoctorModal({ doctor, onClose, onUpdate }) {
             <div><label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Experience (yrs)</label><input name="experience" type="number" value={form.experience} onChange={handleChange} style={inp} required /></div>
             <div><label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Fee (₹)</label><input name="fee" type="number" value={form.fee} onChange={handleChange} style={inp} required /></div>
             <div><label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Qualifications</label><input name="qualifications" value={form.qualifications} onChange={handleChange} style={inp} /></div>
-            <div><label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Location</label><input name="location" value={form.location} onChange={handleChange} style={inp} /></div>
+            <div>
+              <label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Assign Hospitals</label>
+              <div style={{ ...inp, minHeight: 42, maxHeight: 150, overflowY: 'auto', padding: '8px' }}>
+                {allHospitals.length === 0 ? <p style={{fontSize: 12, color: '#9ca3af', margin: 0}}>No hospitals found.</p> :
+                  allHospitals.map(h => (
+                    <label key={h._id} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, cursor: 'pointer', fontSize: 12 }}>
+                      <input 
+                        type="checkbox" 
+                        checked={form.hospitals.includes(h._id)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setForm(prev => {
+                            const newHospitals = checked 
+                              ? [...prev.hospitals, h._id]
+                              : prev.hospitals.filter(id => id !== h._id);
+                            return { ...prev, hospitals: newHospitals };
+                          });
+                        }}
+                      />
+                      {h.name} ({h.city})
+                    </label>
+                  ))
+                }
+              </div>
+            </div>
             <div><label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Success Rate (%)</label><input name="success" type="number" value={form.success} onChange={handleChange} style={inp} /></div>
             <div><label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Patients Count</label><input name="patients" value={form.patients} onChange={handleChange} style={inp} /></div>
             <div><label style={{ fontSize: 11, fontWeight: 700, color: '#6b7280', marginBottom: 5, display: 'block' }}>Rating</label><input name="rating" type="number" step="0.1" value={form.rating} onChange={handleChange} style={inp} /></div>

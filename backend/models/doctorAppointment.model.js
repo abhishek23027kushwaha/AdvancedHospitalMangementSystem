@@ -24,6 +24,14 @@ const doctorAppointmentSchema = new mongoose.Schema(
     doctorName:          { type: String, required: true },
     doctorSpecialization:{ type: String, required: true },
 
+    // ── Where ──
+    hospital: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hospital",
+      default: null,
+    },
+    hospitalName: { type: String, default: "" },
+
     // ── Slot selected ── (maps to a slot._id in Doctor.slots)
     slotId:   { type: mongoose.Schema.Types.ObjectId, default: null },
     date:     { type: String, required: true },   // "22 Mar 2026"

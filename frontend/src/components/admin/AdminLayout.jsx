@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, clearUser } from '../../redux/user.slice';
 import {
   LayoutDashboard, UserPlus, Users, CalendarCheck,
-  LayoutGrid, PlusSquare, List, CalendarRange, Stethoscope, LogOut, Menu, X as CloseIcon, Phone
+  LayoutGrid, PlusSquare, List, CalendarRange, Stethoscope, LogOut, Menu, X as CloseIcon, Phone, Building2
 } from 'lucide-react';
 import { useState } from 'react';
 
 const navLinks = [
   { label: 'Dashboard',            to: '/admin',                    icon: LayoutDashboard, end: true },
+  { label: 'Hospitals',            to: '/admin/list-hospitals',     icon: Building2 },
   { label: 'Add Doctor',           to: '/admin/add-doctor',         icon: UserPlus },
   { label: 'List Doctors',         to: '/admin/list-doctors',       icon: Users },
   { label: 'Appointments',         to: '/admin/appointments',       icon: CalendarCheck },

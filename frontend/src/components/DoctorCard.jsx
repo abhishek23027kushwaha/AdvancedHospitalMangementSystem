@@ -1,9 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Star, Clock, ChevronRight } from 'lucide-react';
+import { Star, Clock, ChevronRight, Building2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
-const DoctorCard = ({ _id, name, speciality, specialization, experience, image, rating }) => {
+const DoctorCard = ({ _id, name, speciality, specialization, experience, image, rating, hospitals }) => {
   const displaySpeciality = speciality || specialization || "Medical Specialist";
   const displayRating = typeof rating === 'number' ? rating.toFixed(1) : "4.9";
   const navigate = useNavigate();
@@ -37,10 +37,20 @@ const DoctorCard = ({ _id, name, speciality, specialization, experience, image, 
         <p className="text-[#2563EB] font-bold text-sm mt-0.5 line-clamp-1">{displaySpeciality}</p>
       </div>
 
-      {/* Experience Badge */}
-      <div className="inline-flex items-center gap-1.5 bg-[#EFF6FF] text-[#2563EB] px-3 py-1 rounded-full w-fit mb-5">
-        <Clock size={12} />
-        <span className="text-[10px] font-black uppercase tracking-wider">{experience} Years Experience</span>
+      {/* Experience & Hospitals */}
+      <div className="flex flex-col gap-2 mb-5">
+        <div className="inline-flex items-center gap-1.5 bg-[#EFF6FF] text-[#2563EB] px-3 py-1 rounded-full w-fit">
+          <Clock size={12} />
+          <span className="text-[10px] font-black uppercase tracking-wider">{experience} Years Experience</span>
+        </div>
+        {hospitals && hospitals.length > 0 && (
+          <div className="inline-flex items-center gap-1.5 bg-[#F0FDF4] text-[#16A34A] px-3 py-1 rounded-full w-fit max-w-full">
+            <Building2 size={12} className="flex-shrink-0" />
+            <span className="text-[10px] font-black uppercase tracking-wider truncate">
+              {hospitals.map(h => typeof h === 'object' ? h.name : h).join(', ')}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Book Button */}

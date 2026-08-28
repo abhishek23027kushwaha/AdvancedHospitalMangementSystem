@@ -40,6 +40,8 @@ import ListServices from "./pages/admin/ListServices"
 import ServiceAppointments from "./pages/admin/ServiceAppointments"
 import AdminContacts from "./pages/admin/contacts"
 import AdminLogin from "./pages/admin/AdminLogin"
+import AddHospital from "./pages/admin/AddHospital"
+import ListHospitals from "./pages/admin/ListHospitals"
 
 /* ── User layout: Navbar + Footer ── */
 const UserLayout = () => (
@@ -132,6 +134,8 @@ function App() {
       {/* ── Admin Panel Routes ── */}
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<AdminDashboard />} />
+        <Route path="add-hospital" element={<AddHospital />} />
+        <Route path="list-hospitals" element={<ListHospitals />} />
         <Route path="add-doctor" element={<AddDoctor />} />
         <Route path="list-doctors" element={<ListDoctors />} />
         <Route path="appointments" element={<AdminAppointments />} />

@@ -1,15 +1,28 @@
-import { useState } from 'react';
-import { UserPlus, Upload, CheckCircle, AlertCircle, Loader, Calendar, Clock, Plus, Trash2, ChevronRight, ChevronLeft, CalendarPlus } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { UserPlus, Upload, CheckCircle, AlertCircle, Loader, Calendar, Clock, Plus, Trash2, ChevronRight, ChevronLeft, CalendarPlus, Building2 } from 'lucide-react';
 import axios from '../../utils/axiosInstance';
 import AllSpecialtiesModal from '../Doctors/AllSpecialtiesModal';
 
 export default function AddDoctor() {
   const [step, setStep] = useState(1);
+  const [allHospitals, setAllHospitals] = useState([]);
   
+  useEffect(() => {
+    const getHospitals = async () => {
+      try {
+        const { data } = await axios.get('/hospitals');
+        if (data.success) setAllHospitals(data.hospitals);
+      } catch(err) {
+        console.error("Failed to fetch hospitals", err);
+      }
+    };
+    getHospitals();
+  }, []);
+
   const [form, setForm] = useState({
     name: '', email: '', password: '', phone: '',
     specialization: [], experience: '', fee: '', about: '', available: 'true',
-    qualifications: '', location: '', patients: '', success: '', rating: '5',
+    qualifications: '', location: '', hospitals: [], patients: '', success: '', rating: '5',
   });
   
   const [img, setImg] = useState(null);
@@ -53,8 +66,8 @@ export default function AddDoctor() {
       setError("Please fill all required professional details.");
       return;
     }
-    if (step === 3 && (!form.about)) {
-      setError("Please fill the 'About' section.");
+    if (step === 3 && (!form.about || form.hospitals.length === 0)) {
+      setError("Please fill the 'About' section and assign at least one Hospital.");
       return;
     }
     setError('');
@@ -130,6 +143,8 @@ export default function AddDoctor() {
       Object.entries(form).forEach(([k, v]) => {
         if (k === 'specialization') {
           v.forEach(spec => fd.append('specialization', spec));
+        } else if (k === 'hospitals') {
+          fd.append(k, JSON.stringify(v));
         } else {
           fd.append(k, v);
         }
@@ -141,7 +156,7 @@ export default function AddDoctor() {
 
       if (data.success) {
         setSuccess(`✅ Dr. ${data.doctor.name} added successfully!`);
-        setForm({ name: '', email: '', password: '', phone: '', specialization: [], experience: '', fee: '', about: '', available: 'true', qualifications: '', location: '', patients: '', success: '', rating: '5' });
+        setForm({ name: '', email: '', password: '', phone: '', specialization: [], experience: '', fee: '', about: '', available: 'true', qualifications: '', location: '', hospitals: [], patients: '', success: '', rating: '5' });
         setImg(null); setPreview(null);
         setSlots([]); setStep(1);
       }
@@ -266,8 +281,29 @@ export default function AddDoctor() {
           <h2 style={{ fontSize: 18, fontWeight: 800, marginBottom: 24, color: '#1f2937' }}>Practice & Metrics</h2>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
             <div>
-              <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Clinic / Hospital Location</label>
-              <input name="location" value={form.location} onChange={handleChange} placeholder="e.g. Apollo, Mumbai" style={inp} />
+              <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Assign Hospitals / Branches *</label>
+              <div style={{ ...inp, minHeight: 42, maxHeight: 150, overflowY: 'auto', padding: '8px' }}>
+                {allHospitals.length === 0 ? <p style={{fontSize: 12, color: '#9ca3af', margin: 0}}>No hospitals found. Add from Admin panel first.</p> :
+                  allHospitals.map(h => (
+                    <label key={h._id} style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4, cursor: 'pointer', fontSize: 13 }}>
+                      <input 
+                        type="checkbox" 
+                        checked={form.hospitals.includes(h._id)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setForm(prev => {
+                            const newHospitals = checked 
+                              ? [...prev.hospitals, h._id]
+                              : prev.hospitals.filter(id => id !== h._id);
+                            return { ...prev, hospitals: newHospitals };
+                          });
+                        }}
+                      />
+                      {h.name} ({h.city})
+                    </label>
+                  ))
+                }
+              </div>
             </div>
             <div>
               <label style={{ fontSize: 12, fontWeight: 600, color: '#374151', display: 'block', marginBottom: 6 }}>Availability Status</label>

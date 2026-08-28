@@ -12,6 +12,7 @@ import patientAppointmentRoutes from "./routes/patientAppointment.routes.js";
 import serviceRoutes from "./routes/service.routes.js";
 import serviceAppointmentRoutes from "./routes/serviceAppointment.routes.js";
 import contactRoutes from "./routes/contact.routes.js";
+import hospitalRoutes from "./routes/hospital.routes.js";
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use("/api/patient/appointments", patientAppointmentRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/service-appointments", serviceAppointmentRoutes);
 app.use("/api/contacts", contactRoutes);
+app.use("/api/hospitals", hospitalRoutes);
 // ── 404 handler ───────────────────────────────────────────────────────────
 app.use((req, res) => {
   res.status(404).json({ success: false, message: `Route ${req.method} ${req.originalUrl} not found` });

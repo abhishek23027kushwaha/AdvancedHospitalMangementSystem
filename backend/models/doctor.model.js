@@ -105,6 +105,10 @@ const doctorSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    hospitals: [{
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Hospital"
+    }],
     patients: {
       type: String,
       default: "0",

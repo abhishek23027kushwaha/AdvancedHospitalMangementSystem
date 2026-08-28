@@ -185,7 +185,31 @@ export const updateAppointmentStatusByDoctor = async (req, res) => {
 // ── GET /api/doctor/all ──────────────────────────────────────────────────
 export const getAllDoctors = async (req, res) => {
   try {
-    const doctors = await Doctor.find().select("-password");
+    const { hospitalId, city } = req.query;
+    
+    // Build match filter for population if city is provided
+    const matchHospital = city ? { city: new RegExp(`^${city}$`, "i") } : {};
+
+    let doctors = await Doctor.find()
+      .select("-password")
+      .populate({
+        path: "hospitals",
+        match: matchHospital
+      });
+
+    // If a specific hospital is requested
+    if (hospitalId) {
+      doctors = doctors.filter(doc => 
+        doc.hospitals.some(h => h && h._id.toString() === hospitalId)
+      );
+    } 
+    // If a city is requested, keep only doctors that have at least one hospital in that city
+    else if (city) {
+      doctors = doctors.filter(doc => 
+        doc.hospitals.some(h => h !== null)
+      );
+    }
+
     return res.status(200).json({ success: true, doctors });
   } catch (err) {
     console.error("getAllDoctors error:", err);
