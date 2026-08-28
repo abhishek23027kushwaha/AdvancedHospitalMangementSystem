@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "../utils/axiosInstance";
-import { motion, AnimatePresence } from "framer-motion";
-import { Calendar, Clock, Activity, Search } from "lucide-react";
+import { Search, ChevronLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 const MyServices = () => {
+  const navigate = useNavigate();
   const [serviceAppts, setServiceAppts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const fetchServiceAppointments = async () => {
     try {
@@ -16,88 +18,101 @@ const MyServices = () => {
       }
     } catch (err) {
       console.error("Error fetching service appointments:", err);
-      toast.error("Failed to load service appointments");
-    } finally {
-      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchServiceAppointments();
+    const fetchData = async () => {
+      setLoading(true);
+      await fetchServiceAppointments();
+      setLoading(false);
+    };
+    fetchData();
   }, []);
 
-  if (loading) {
+  const filteredAppts = serviceAppts.filter((appt) => {
+    const search = searchTerm.toLowerCase();
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC]">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#2a5df6]"></div>
-      </div>
+      appt.patientName?.toLowerCase().includes(search) ||
+      appt.serviceName?.toLowerCase().includes(search)
     );
-  }
+  });
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-12 px-4 md:px-8">
-      <div className="max-w-7xl mx-auto">
-        <section className="space-y-10 pb-20">
-          <div className="text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#2a5df6]">
-              Your Booked Services
-            </h2>
-            <div className="w-24 h-1 bg-[#2a5df6] mx-auto mt-4 rounded-full" />
+    <div className="min-h-screen bg-white">
+      {/* Top Header Section */}
+      <div className="px-6 sm:px-12 pt-8 pb-4 flex flex-col md:flex-row md:items-center justify-between border-b border-gray-200">
+        <div 
+          onClick={() => navigate(-1)} 
+          className="flex items-center gap-2 cursor-pointer text-gray-800 hover:text-gray-600 mb-4 md:mb-0 w-fit"
+        >
+          <ChevronLeft size={20} />
+          <h1 className="text-[20px] font-semibold">
+            My Tests
+          </h1>
+        </div>
+        
+        <div className="flex items-center gap-6">
+          <div className="relative">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <Search className="h-4 w-4 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              placeholder="Search by patient"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-9 pr-4 py-2 border border-gray-200 rounded text-[13px] outline-none focus:border-gray-400 w-full sm:w-[280px]"
+            />
           </div>
+        </div>
+      </div>
 
-          <div className="flex flex-wrap justify-center gap-8">
-            <AnimatePresence>
-              {serviceAppts.length > 0 ? (
-                serviceAppts.map((appt, index) => (
-                  <motion.div
-                    key={appt._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    className="w-full max-w-[340px] bg-white rounded-[2rem] p-8 shadow-xl shadow-blue-900/5 border border-gray-100 flex flex-col items-center text-center group"
-                  >
-                    <div className="w-20 h-20 rounded-full bg-blue-50 flex items-center justify-center mb-6 border border-blue-100 shadow-inner group-hover:scale-110 transition-transform duration-500">
-                      <Search className="text-blue-500" size={32} />
-                    </div>
+      {/* Table Headers */}
+      <div className="px-6 sm:px-12 py-3 border-b border-gray-200 grid grid-cols-4 text-[13px] font-semibold text-gray-700 text-center">
+        <div className="text-left">Patient Details</div>
+        <div>AppointmentDate/Time</div>
+        <div>Status</div>
+        <div>Tests</div>
+      </div>
 
-                    <h3 className="text-xl font-bold text-gray-800 mb-1">{appt.serviceName}</h3>
-                    <p className="text-blue-500 font-medium text-xs mb-6 uppercase tracking-wider">
-                      Diagnostic Service
-                    </p>
-
-                    <div className="w-full space-y-3 mb-8">
-                      <div className="flex items-center justify-between bg-blue-50/50 border border-blue-100 px-5 py-2.5 rounded-full text-gray-600 font-bold text-[12px]">
-                        <span className="flex items-center gap-2"><Calendar size={14} className="text-blue-500" /> Date:</span>
-                        <span>{appt.date}</span>
-                      </div>
-                      <div className="flex items-center justify-between bg-blue-50/50 border border-blue-100 px-5 py-2.5 rounded-full text-gray-600 font-bold text-[12px]">
-                        <span className="flex items-center gap-2"><Clock size={14} className="text-blue-500" /> Time:</span>
-                        <span>{appt.timeSlot}</span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-3 mt-auto">
-                       <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-                        appt.isPaid ? 'bg-blue-100 text-blue-700 border-blue-200' : 'bg-blue-50 text-blue-600 border-blue-100'
-                      }`}>
-                         {appt.isPaid ? 'Paid' : 'Pending'}
-                       </span>
-                       <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-                        appt.status === 'Completed' ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-blue-50 text-blue-600 border-blue-100'
-                      }`}>
-                         {appt.status}
-                       </span>
-                    </div>
-                  </motion.div>
-                ))
-              ) : (
-                <div className="text-center py-10 w-full">
-                  <p className="text-gray-500 font-medium text-lg">No services are booked.</p>
+      {/* Table Body */}
+      <div className="px-6 sm:px-12 py-8 min-h-[400px]">
+        {loading ? (
+           <div className="flex justify-center pt-10">
+             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-gray-400"></div>
+           </div>
+        ) : filteredAppts.length > 0 ? (
+          <div className="flex flex-col gap-4">
+            {filteredAppts.map((appt) => (
+              <div key={appt._id} className="grid grid-cols-4 items-center text-[13px] text-gray-600 text-center py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                <div className="text-left font-medium text-gray-800">
+                  {appt.patientName || "Self"}
                 </div>
-              )}
-            </AnimatePresence>
+                <div>
+                  {appt.date} <br/>
+                  <span className="text-xs text-gray-500">{appt.timeSlot}</span>
+                </div>
+                <div>
+                  <span className={`px-3 py-1 rounded-full text-[12px] font-medium ${
+                    appt.status === 'Completed' ? 'bg-gray-100 text-gray-600' : 
+                    appt.status === 'Cancelled' ? 'bg-red-50 text-red-600' : 
+                    'bg-green-50 text-[#10b981]'
+                  }`}>
+                    {appt.status}
+                  </span>
+                </div>
+                <div>
+                  {appt.serviceName}
+                </div>
+              </div>
+            ))}
           </div>
-        </section>
+        ) : (
+          <div className="text-center pt-4">
+            <span className="text-red-500 text-[13px]">No result found!</span>
+          </div>
+        )}
       </div>
     </div>
   );
