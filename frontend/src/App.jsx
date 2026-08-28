@@ -13,7 +13,7 @@ import Appointments from "./pages/Appointments"
 import MyAppointments from "./pages/MyAppointments"
 import MyServices from "./pages/MyServices"
 import Contact from "./pages/Contact"
-import AllDoctors from "./pages/AllDoctors"
+import FindDoctor from "./pages/Doctors/FindDoctor"
 import DoctorAdmin from "./pages/DoctorAdmin"
 import DoctorLogin from "./pages/DoctorLogin"
 import ServiceBooking from "./pages/ServiceBooking"
@@ -22,6 +22,7 @@ import VideoConsult from "./pages/consult/VideoConsult"
 import LabTest from "./pages/LabTest/LabTest"
 import Surgeries from "./pages/Surgeries/Surgeries"
 import HealthWellness from "./pages/Corporates/HealthWellness"
+import BookingSummary from './pages/BookingSummary';
 
 // ── Shared Components ──
 import Navbar from "./components/Navbar"
@@ -105,12 +106,13 @@ function App() {
       <Route element={<UserLayout />}>
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<AboutUs />} />
-        <Route path="/doctors" element={<AllDoctors />} />
+        <Route path="/doctors" element={<FindDoctor />} />
         <Route path="/services" element={<Services />} />
         <Route path="/surgeries" element={<Surgeries />} />
         <Route path="/consult" element={<VideoConsult />} />
         <Route path="/labtest" element={<LabTest />} />
         <Route path="/book-appointment/:doctorId?" element={<Appointments />} />
+        <Route path="/booking-summary" element={<BookingSummary />} />
         <Route path="/book-service/:serviceId" element={<ServiceBooking />} />
         <Route path="/appointments" element={<MyAppointments />} />
         <Route path="/my-services" element={<MyServices />} />

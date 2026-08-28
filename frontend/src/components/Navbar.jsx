@@ -5,6 +5,33 @@ import { User, LogOut, Menu, X, Calendar, Activity, ChevronDown } from "lucide-r
 import { useDispatch, useSelector } from "react-redux";
 import { clearUser, selectUser, selectIsAuth } from "../redux/user.slice.js";
 import { selectDoctor, selectIsDoctorAuth, clearDoctor } from "../redux/doctor.slice.js";
+import doctorsHeroImg from "../assets/doctors_hero.png";
+
+const specialtiesColumn1 = [
+  "Cardiologist", "Orthopaedician", "Oncologist", "Cardiac Surgeon", 
+  "Neurologist", "Gastroenterologist", "Urologist", "Pulmonologist"
+];
+const specialtiesColumn2 = [
+  "General Surgeon", "Gynecologist", "Endocrinologist", "ENT Specialist", 
+  "Vascular Surgeon", "Plastic Surgeon", "Nephrologist", "Dermatologist"
+];
+const specialtiesColumn3 = [
+  "Pediatrician", "Dentist"
+];
+
+const hospitalsColumn1 = [
+  "Bangalore", "Guwahati", "Mumbai", "Raipur", 
+  "Dharwad", "Shimoga", "Kolkata", "Davangere"
+];
+const hospitalsColumn2 = [
+  "Ahmedabad", "Jaipur", "Jamshedpur", "Kolar", 
+  "Barasat", "Gurugram", "Howrah", "Delhi"
+];
+const hospitalsColumn3 = [
+  "Mysore", "Hosur"
+];
+
+import BannerImg from "../assets/BannerImg.png";
 
 const Navbar = () => {
   const location = useLocation();
@@ -64,12 +91,134 @@ const Navbar = () => {
 
             {/* Desktop Left Nav */}
             <div className="hidden lg:flex items-center gap-8 h-full">
-              <Link to="/doctors" className="text-[15px] font-bold text-[#414146] hover:text-[#28328C] transition-colors no-underline">
-                Find Doctors
-              </Link>
-              <Link to="/consult" className="text-[15px] font-bold text-[#414146] hover:text-[#28328C] transition-colors no-underline">
-                Video Consult
-              </Link>
+              
+              {/* Find Doctors Mega Menu */}
+              <div className="relative h-full flex items-center group">
+                <Link to="/doctors" className="text-[15px] font-bold text-[#414146] group-hover:text-[#28328C] transition-colors no-underline h-full flex items-center gap-1">
+                  Find Doctors
+                  <ChevronDown size={14} className="text-[#414146] group-hover:text-[#28328C] transition-transform duration-200 group-hover:rotate-180" />
+                </Link>
+                
+                {/* Backdrop overlay that blurs the rest of the page */}
+                <div className="fixed inset-0 top-[102px] bg-black/5 backdrop-blur-[3px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none" style={{ zIndex: 40 }}></div>
+
+                {/* Mega Menu Dropdown */}
+                <div className="absolute top-[102px] left-0 w-[950px] bg-white shadow-2xl rounded-b-xl border border-gray-100 p-4 flex gap-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                  
+                  {/* Left Side - Links */}
+                  <div className="flex-1 bg-[#fafafa] rounded-xl p-8">
+                    <h3 className="text-[24px] font-medium text-black mb-2">Find a Doctor</h3>
+                    <p className="text-[14px] text-gray-600 mb-8">Explore doctors by specialty and get expert medical guidance.</p>
+                    
+                    <div className="grid grid-cols-3 gap-y-5 gap-x-4">
+                      {/* Column 1 */}
+                      <div className="flex flex-col gap-5">
+                        {specialtiesColumn1.map((spec, i) => (
+                          <Link key={i} to="/doctors" className="text-[14px] text-gray-800 hover:text-blue-600 no-underline transition-colors">
+                            Find a {spec}
+                          </Link>
+                        ))}
+                      </div>
+                      
+                      {/* Column 2 */}
+                      <div className="flex flex-col gap-5">
+                        {specialtiesColumn2.map((spec, i) => (
+                          <Link key={i} to="/doctors" className="text-[14px] text-gray-800 hover:text-blue-600 no-underline transition-colors">
+                            Find a {spec}
+                          </Link>
+                        ))}
+                      </div>
+
+                      {/* Column 3 */}
+                      <div className="flex flex-col gap-5">
+                        {specialtiesColumn3.map((spec, i) => (
+                          <Link key={i} to="/doctors" className="text-[14px] text-gray-800 hover:text-blue-600 no-underline transition-colors">
+                            Find a {spec}
+                          </Link>
+                        ))}
+                        <Link to="/doctors" className="text-[14px] text-blue-600 hover:underline mt-2">
+                          View All
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Side - Image */}
+                  <div className="w-[300px] shrink-0 rounded-xl overflow-hidden relative">
+                    <img src={doctorsHeroImg} alt="Doctors" className="w-full h-full object-cover" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/80 via-black/40 to-transparent">
+                      <p className="text-white text-[15px] font-medium leading-snug">
+                        2 Million + lives touched every year, & counting....
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              {/* Hospitals & Clinics Mega Menu */}
+              <div className="relative h-full flex items-center group">
+                <div className="flex items-center gap-1 cursor-pointer">
+                  <span className="text-[15px] font-bold text-[#414146] group-hover:text-[#28328C] transition-colors">Hospitals & Clinics</span>
+                  <ChevronDown size={14} className="text-[#414146] group-hover:text-[#28328C] transition-transform duration-200 group-hover:rotate-180" />
+                </div>
+                
+                {/* Backdrop overlay */}
+                <div className="fixed inset-0 top-[102px] bg-black/5 backdrop-blur-[3px] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 pointer-events-none" style={{ zIndex: 40 }}></div>
+
+                {/* Mega Menu Dropdown */}
+                <div className="absolute top-[102px] left-0 w-[850px] bg-white shadow-2xl rounded-b-xl border border-gray-100 p-4 flex gap-4 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                  
+                  {/* Left Side - Links */}
+                  <div className="flex-1 bg-[#fafafa] rounded-xl p-8">
+                    <h3 className="text-[24px] font-medium text-black mb-2">Hospitals & Clinics</h3>
+                    <p className="text-[14px] text-gray-600 mb-8">Discover hospitals and clinics near you.</p>
+                    
+                    <div className="grid grid-cols-3 gap-y-5 gap-x-4">
+                      {/* Column 1 */}
+                      <div className="flex flex-col gap-5">
+                        {hospitalsColumn1.map((city, i) => (
+                          <Link key={i} to="/hospitals" className="text-[14px] text-gray-800 hover:text-blue-600 no-underline transition-colors">
+                            {city}
+                          </Link>
+                        ))}
+                      </div>
+                      
+                      {/* Column 2 */}
+                      <div className="flex flex-col gap-5">
+                        {hospitalsColumn2.map((city, i) => (
+                          <Link key={i} to="/hospitals" className="text-[14px] text-gray-800 hover:text-blue-600 no-underline transition-colors">
+                            {city}
+                          </Link>
+                        ))}
+                      </div>
+
+                      {/* Column 3 */}
+                      <div className="flex flex-col gap-5">
+                        {hospitalsColumn3.map((city, i) => (
+                          <Link key={i} to="/hospitals" className="text-[14px] text-gray-800 hover:text-blue-600 no-underline transition-colors">
+                            {city}
+                          </Link>
+                        ))}
+                        <Link to="/hospitals" className="text-[14px] text-blue-600 hover:underline mt-2">
+                          View All
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Side - Image */}
+                  <div className="w-[280px] shrink-0 rounded-xl overflow-hidden relative bg-gray-200">
+                    <img src={BannerImg} alt="Hospital" className="w-full h-full object-cover" />
+                    <div className="absolute bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-black/90 via-black/60 to-transparent">
+                      <p className="text-white text-[13px] font-bold mb-1">Accreditations</p>
+                      <p className="text-white/90 text-[12px] leading-snug">
+                        JCI Enterprise, JCI-accredited hospitals, CAP-accredited labs, NABH and NABL.
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
               <Link to="/labtest" className="text-[15px] font-bold text-[#414146] hover:text-[#28328C] transition-colors no-underline">
                 Lab Tests
               </Link>
@@ -98,10 +247,11 @@ const Navbar = () => {
                   </Link>
                 </div>
               </div>
-              <div className="flex items-center gap-1 cursor-pointer group">
-                <span className="text-[14px] text-[#414146] group-hover:text-[#28328C] transition-colors">For Providers</span>
-                <ChevronDown size={14} className="text-[#414146] group-hover:text-[#28328C]" />
-              </div>
+
+              <Link to="/consult" className="text-[14px] text-[#414146] hover:text-[#28328C] transition-colors no-underline">
+                Video Consult
+              </Link>
+
               <div className="flex items-center gap-1 cursor-pointer group">
                 <span className="text-[14px] text-[#414146] group-hover:text-[#28328C] transition-colors">Security & help</span>
                 <ChevronDown size={14} className="text-[#414146] group-hover:text-[#28328C]" />
